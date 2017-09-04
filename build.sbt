@@ -1,0 +1,62 @@
+import Dependencies._
+
+name := "roomService"
+
+val akkaV       = "2.5.3"
+val akkaHttpV   = "10.0.9"
+val scalaTestV  = "3.0.1"
+val slickVersion = "3.2.0-M2"
+val circeV = "0.6.1"
+
+lazy val commonSettings = Seq(
+  organization := "me.server",
+  version := "1.0.0",
+  scalaVersion := "2.12.1"
+)
+
+resolvers += Resolver.jcenterRepo
+
+lazy val root = (project in file("."))
+  .aggregate(server,projections,frontend,domain,utils)
+
+lazy val server = (project in file("server"))
+  .settings(
+    commonSettings,
+    name := "server",
+    libraryDependencies ++= serverDeps
+
+  )
+  .dependsOn(frontend,domain,projections,utils)
+
+lazy val frontend = (project in file("frontend"))
+  .settings(
+    commonSettings,
+    name := "frontend",
+    libraryDependencies ++= frontendDeps
+  )
+  .dependsOn(utils,domain,projections)
+
+lazy val projections = (project in file("projections"))
+  .settings(
+    commonSettings,
+    name := "projections",
+    libraryDependencies ++= projectionsDeps
+  )
+  .dependsOn(domain,utils)
+
+lazy val domain = (project in file("domain"))
+  .settings(
+    commonSettings,
+    name := "domain",
+    libraryDependencies ++= domainDeps
+  )
+  .dependsOn(utils)
+
+lazy val utils = (project in file("utils"))
+  .settings(
+    commonSettings,
+    name := "utils",
+    libraryDependencies ++= utilsDeps
+  )
+
+
