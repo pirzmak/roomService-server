@@ -1,41 +1,38 @@
 package me.server.domain.users
 
 import akka.persistence.PersistentActor
-import me.server.domain.users_api.{CreateUser, User, UserCreated, UserEvent}
-import me.server.utils.{CommandResult, StatusResponse, VersionId}
+import me.server.domain.users_api._
+import me.server.utils.me.server.utils.cqrs.MyEvent
+import me.server.utils.{CommandResult, StatusResponse}
 
 import scala.concurrent.ExecutionContext
 
-case class UsersAggregateState(events: List[UserEvent] = Nil) {
-  def updated(evt: UserEvent): UsersAggregateState = copy(evt :: events)
+case class UsersAggregateState(events: List[MyEvent] = Nil) {
+  def updated(evt: MyEvent): UsersAggregateState = copy(evt :: events)
   def size: Int = events.length
   override def toString: String = events.reverse.toString
 }
 
 class UsersAggregateContext()(implicit val ec: ExecutionContext) extends PersistentActor {
-  def persistenceId = "usersAggregate"
+  def persistenceId = "userAggregateContext"
 
   var state = UsersAggregateState()
 
   def numEvents = state.size
 
-  def updateState(event: UserEvent): Unit =
+  def updateState(event: MyEvent): Unit =
     state = state.updated(event)
-
-  var users: List[User] = List.empty
 
   val receiveCommand: Receive = {
     case c: CreateUser =>
-      persist(UserCreated(c.id,c.username,c.password)) { event =>
+      persist(MyEvent(UserCreated(UserId(0),c.email,c.password,c.firstName,c.lastName))) { event: MyEvent =>
         updateState(event)
-        sender() ! CommandResult(StatusResponse.success,event.id,VersionId(1),"")
+        sender() ! CommandResult(StatusResponse.success,event.aggregateId,event.aggregateVersion,"")
       }
   }
 
   val receiveRecover: Receive = {
-    case e: UserCreated =>
-      users =  User(e.id, VersionId(1), e.username, e.password, true) :: users
-      updateState(e)
+    case e: MyEvent => updateState(e)
   }
 
 }

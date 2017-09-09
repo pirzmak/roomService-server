@@ -6,7 +6,6 @@ object Main extends App{
 
   override def main(args: Array[String]) {
     val context = new Context()
-    context.init()
     context.frontend.start()
   }
 }

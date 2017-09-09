@@ -12,10 +12,10 @@ object StatusResponse {
   }
 }
 
-trait AggregateId {
-  def asLong: Long
+case class AggregateId(id: Long) {
+  def asLong: Long = id
 }
 
-case class VersionId(id: Long)
+case class AggregateVersion(id: Long)
 
-case class CommandResult(status: StatusResponse, id: AggregateId, version: VersionId, message: String)
+case class CommandResult(status: StatusResponse, id: AggregateId, version: AggregateVersion, message: String)
