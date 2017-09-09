@@ -20,7 +20,7 @@ class UsersSpec() extends TestKit(ActorSystem("UsersSpec")) with ImplicitSender 
   "An User actor" must {
 
     "send back messages unchanged" in {
-      val echo = system.actorOf(Props(new UsersAggregateContext()), "userAggregateContext")
+      val echo = system.actorOf(Props(new UsersAggregateContext("userAggregateContext")), "userAggregateContext")
       echo ! CreateUser("mail","pas", "adam", "haslo")
       expectMsg(CommandResult(StatusResponse.success, AggregateId(0), AggregateVersion(0), ""))
     }

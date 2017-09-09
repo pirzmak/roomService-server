@@ -8,10 +8,13 @@ import akka.persistence.query.scaladsl._
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 
-import scala.concurrent.ExecutionContext
 
 trait EventEvaluator {
   def eventEvaluator(event : MyEvent){}
+}
+
+trait receiverQuery {
+  def receiveQuery()
 }
 
 abstract class ProjectionActor(projectionId: String, aggregateId: String)(implicit system: ActorSystem)

@@ -1,10 +1,9 @@
 import akka.actor.{ActorSystem, Props}
 import akka.dispatch.ExecutionContexts.global
 import me.server.domain.users.UsersAggregateContext
-import me.server.domain.users_api.{CreateUser, UserCreated, UserId}
 import me.server.frontend.{FrontendServer, MainRestService}
 import me.server.frontend.http.rest.UsersServiceRoute
-import user.UserProjection
+import users.{UserDocumentStore, UserProjection}
 
 class Context {
 
@@ -13,8 +12,9 @@ class Context {
 
     implicit val ec = global
 
-    val userContextActor = system.actorOf(Props(new UsersAggregateContext()), "userAggregateContext")
-    val userProjection = system.actorOf(Props(new UserProjection("userProjection", "userAggregateContext")), "userProjection")
+    val userContextActor = system.actorOf(Props(new UsersAggregateContext("userAggregateContext")), "userAggregateContext")
+    val userStore = new UserDocumentStore()
+    val userProjection = system.actorOf(Props(new UserProjection("userProjection", "userAggregateContext", userStore)), "userProjection")
 
     val usersServiceRoute = new UsersServiceRoute(userContextActor)
     val mainRestServiceActor = new MainRestService(usersServiceRoute)

@@ -13,8 +13,8 @@ case class UsersAggregateState(events: List[MyEvent] = Nil) {
   override def toString: String = events.reverse.toString
 }
 
-class UsersAggregateContext()(implicit val ec: ExecutionContext) extends PersistentActor {
-  def persistenceId = "userAggregateContext"
+class UsersAggregateContext(aggregateId: String)(implicit val ec: ExecutionContext) extends PersistentActor {
+  def persistenceId = aggregateId
 
   var state = UsersAggregateState()
 
