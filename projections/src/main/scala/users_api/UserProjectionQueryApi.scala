@@ -13,4 +13,8 @@ class UserProjectionQueryApi(projection: ActorRef)(implicit akkaTimeout: Timeout
     (projection ? query).mapTo[User]
   }
 
+  def getAllUsers(query: GetAllUsers): Future[List[User]] = {
+    (projection ? query).mapTo[List[User]]
+  }
+
 }

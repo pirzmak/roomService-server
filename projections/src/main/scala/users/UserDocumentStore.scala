@@ -9,9 +9,9 @@ class UserDocumentStore extends Store[User]{
   override def insertDocument(aggregateId: AggregateId, aggregateVersion: AggregateVersion, aggregate: User): Unit =
     users = Aggregate(aggregateId,aggregateVersion,aggregate) :: users
 
-  override def getAll: Iterable[User] = users.map(_.aggregate)
+  override def getAll: Iterable[Aggregate[User]] = users
 
-  override def getDocumentById(aggregateId: AggregateId): Option[User] = users.find(_.aggregateId == aggregateId).map(_.aggregate)
+  override def getDocumentById(aggregateId: AggregateId): Option[Aggregate[User]] = users.find(_.aggregateId.asLong == aggregateId.asLong)
 
 
 }
