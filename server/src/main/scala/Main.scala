@@ -1,3 +1,5 @@
+import scala.reflect.ClassTag
+
 object Main extends App{
 
   import akka.dispatch.ExecutionContexts._

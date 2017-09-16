@@ -1,7 +1,8 @@
 package users
 
 import me.server.domain.users_api.User
-import me.server.utils.{Aggregate, AggregateId, AggregateVersion, Store}
+import me.server.utils.ddd.{AggregateId, AggregateVersion}
+import me.server.utils.{Aggregate, Store}
 
 class UserDocumentStore extends Store[User]{
   var users : List[Aggregate[User]] = Nil

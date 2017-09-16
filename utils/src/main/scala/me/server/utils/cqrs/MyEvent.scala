@@ -1,6 +1,6 @@
-package me.server.utils.me.server.utils.cqrs
+package me.server.utils.cqrs
 
-import me.server.utils.{AggregateId, AggregateVersion}
+import me.server.utils.ddd.{AggregateId, AggregateVersion}
 
 trait Event
 

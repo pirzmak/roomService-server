@@ -1,10 +1,10 @@
-package me.server.utils.me.server.utils.cqrs
+package me.server.utils.cqrs
 
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.persistence.PersistentActor
-import akka.persistence.query.{EventEnvelope, PersistenceQuery}
 import akka.persistence.query.scaladsl._
+import akka.persistence.query.{EventEnvelope, PersistenceQuery}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 

@@ -1,6 +1,6 @@
 package me.server.domain.users_api
 
-import me.server.utils.me.server.utils.cqrs.Event
+import me.server.utils.cqrs.Event
 
 sealed trait UserEvent extends Event
 

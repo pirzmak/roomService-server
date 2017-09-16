@@ -2,7 +2,8 @@ package me.server.frontend.json
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import me.server.domain.users_api.{CreateUser, UserId}
-import me.server.utils.{AggregateId, AggregateVersion, CommandResult, StatusResponse}
+import me.server.utils.cqrs.{CommandResult, StatusResponse}
+import me.server.utils.ddd.{AggregateId, AggregateVersion}
 import spray.json._
 
 

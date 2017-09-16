@@ -7,7 +7,7 @@ import akka.util.Timeout
 import me.server.domain.users_api.CreateUser
 import me.server.frontend.json.JsonSupport
 import akka.pattern.ask
-import me.server.utils.CommandResult
+import me.server.utils.cqrs.CommandResult
 
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext
