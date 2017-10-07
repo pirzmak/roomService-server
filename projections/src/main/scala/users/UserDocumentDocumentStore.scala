@@ -2,9 +2,9 @@ package users
 
 import me.server.domain.users_api.User
 import me.server.utils.ddd.{AggregateId, AggregateVersion}
-import me.server.utils.{Aggregate, Store}
+import me.server.utils.{Aggregate, DocumentStore}
 
-class UserDocumentStore extends Store[User]{
+class UserDocumentDocumentStore extends DocumentStore[User]{
   var users : List[Aggregate[User]] = Nil
 
   override def insertDocument(aggregateId: AggregateId, aggregateVersion: AggregateVersion, aggregate: User): Unit =

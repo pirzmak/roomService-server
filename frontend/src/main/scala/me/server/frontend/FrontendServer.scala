@@ -8,9 +8,11 @@ import me.server.utils.{Config}
 class FrontendServer(mainRestService: MainRestService)(implicit val actorSystem: ActorSystem) extends Config {
 
   def start(): Unit = {
-      implicit val materializer: ActorMaterializer = ActorMaterializer()
+    implicit val materializer: ActorMaterializer = ActorMaterializer()
 
-      Http().bindAndHandle(mainRestService.routes, httpHost, httpPort)
+    Http().bindAndHandle(mainRestService.routes, httpHost, httpPort)
+
+    println("Server started")
 
   }
 

@@ -5,12 +5,12 @@ import akka.actor.ActorSystem
 import me.server.domain.users_api.{User, UserCreated}
 import me.server.utils.cqrs.{MyEvent, ProjectionActor}
 import me.server.utils.ddd.{AggregateId, AggregateVersion}
-import me.server.utils.{Aggregate, Store}
+import me.server.utils.{Aggregate, DocumentStore}
 import users_api.{GetAllUsers, GetUserById}
 
 import scala.concurrent.ExecutionContext
 
-class UserProjection(projectionId: String, aggregateId: String, documentStore: Store[User])(implicit system: ActorSystem,implicit val ec: ExecutionContext) {
+class UserProjection(projectionId: String, aggregateId: String, documentStore: DocumentStore[User])(implicit system: ActorSystem, implicit val ec: ExecutionContext) {
 //  extends ProjectionActor(projectionId, aggregateId) {
 //
 //  override def eventEvaluator(event: MyEvent) = event.event match {

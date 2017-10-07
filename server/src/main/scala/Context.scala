@@ -4,8 +4,9 @@ import me.server.domain.users.UsersAggregateContext
 import me.server.domain.users_api.{CreateUser, User}
 import me.server.frontend.{FrontendServer, MainRestService}
 import me.server.frontend.http.rest.UsersServiceRoute
+import me.server.utils.MockDocumentStore
 import me.server.utils.ddd.AggregateManager
-import users.{UserDocumentStore, UserProjection}
+import users.{UserDocumentDocumentStore, UserProjection}
 import users_api.GetUserById
 
 class Context {
@@ -16,7 +17,8 @@ class Context {
     implicit val ec = global
 
     val userContextActor = new UsersAggregateContext()
-    val commandHandler = system.actorOf(Props(new AggregateManager[User]("UserMenager",userContextActor)))
+    val userDocumentStore = new MockDocumentStore[User]
+    val commandHandler = system.actorOf(Props(new AggregateManager[User]("UserManager",userContextActor, userDocumentStore)),"UserManagerActor")
 
     val usersServiceRoute = new UsersServiceRoute(commandHandler)
     val mainRestServiceActor = new MainRestService(usersServiceRoute)

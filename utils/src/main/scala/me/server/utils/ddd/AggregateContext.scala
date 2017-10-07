@@ -1,9 +1,9 @@
 package me.server.utils.ddd
 
-import me.server.utils.cqrs.{Event, MyCommand, MyEvent}
+import me.server.utils.cqrs.{CommandResponse, Event, MyCommand}
 
 trait AggregateContext[ROOT] {
-  def receiveCommand(command: MyCommand): Event
-  def receiveEvents(event: Event): ROOT
+  def receiveCommand(command: MyCommand): CommandResponse
+  def receiveEvents(event: Event, aggregate: ROOT): ROOT
   def initialAggregate(): ROOT
 }

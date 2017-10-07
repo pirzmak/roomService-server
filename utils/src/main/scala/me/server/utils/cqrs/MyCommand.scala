@@ -19,17 +19,29 @@ trait MyCommand
 
 abstract class FirstCommand[AGGREGATE, COMMAND_RESULT] extends MyCommand
 
-case class CommandWithSender(sender: ActorRef, command: MyCommand)
-
 abstract class Command[AGGREGATE, COMMAND_RESULT] extends MyCommand {
   val aggregateId: AggregateId
   val expectedVersion: AggregateVersion
 }
+
+
+case class CommandWithSender(sender: ActorRef, command: MyCommand)
+
+
+trait CommandResponse
+
+case class CommandSuccess(event: Event) extends CommandResponse
+
+case class CommandFailure(msg: String) extends CommandResponse
+
+
+
 
 case class CommandResult(status: StatusResponse, id: AggregateId, version: AggregateVersion, message: String)
 
 case class CommandException(msg: String) extends Exception(msg)
 
 object CommandException {
-  val unknownCommand = CommandException("UnknownCommand command")
+  val unknownCommand = CommandException("Unknown Command command")
+  val unknownResponse = CommandException("Unknown Command response")
 }

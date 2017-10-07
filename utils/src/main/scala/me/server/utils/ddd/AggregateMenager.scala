@@ -5,6 +5,7 @@ import akka.pattern.ask
 import akka.persistence.PersistentActor
 import me.server.utils.cqrs._
 import akka.util.Timeout
+import me.server.utils.DocumentStore
 
 import scala.concurrent.ExecutionContext
 
@@ -16,7 +17,10 @@ case class AggregateMenagereState(events: List[NewAggregateAdded] = Nil) {
 
 case class NewAggregateAdded()
 
-class AggregateManager[AGGREGATE](actorId: String, aggregateContext: AggregateContext[AGGREGATE])(implicit val ec: ExecutionContext) extends PersistentActor {
+class AggregateManager[AGGREGATE](actorId: String,
+                                  aggregateContext: AggregateContext[AGGREGATE],
+                                  documentStore : DocumentStore[AGGREGATE])
+                                 (implicit val ec: ExecutionContext) extends PersistentActor {
   def persistenceId = actorId
 
   val aggregateTypeName = actorId + "_aggregate"
@@ -27,34 +31,37 @@ class AggregateManager[AGGREGATE](actorId: String, aggregateContext: AggregateCo
     case c: FirstCommand[_,_] =>
       persist(NewAggregateAdded()) {
         event: NewAggregateAdded => updateState(event)
-        this.handleFirstCommand(c)
+          println(sender(),sender)
+        this.handleFirstCommand(c,sender())
       }
     case c: Command[_,_] =>
+      println(aggregatesActors)
       aggregatesActors.get(c.aggregateId.asLong) match {
         case Some(actor) => actor ! CommandWithSender(sender(),c)
-        case None => throw new Exception("Aggregate with id + " + c.aggregateId + " not exist")
+        case None => throw new Exception("Aggregate with id " + c.aggregateId + " not exist")
       }
     case _ => throw CommandException.unknownCommand
   }
 
-  private def handleFirstCommand(command: FirstCommand[_,_]): Unit = {
+  private def handleFirstCommand(command: FirstCommand[_,_], sender: ActorRef): Unit = {
 
     val newAggregateId = numEvents
-    val newActor = createAggregateActorsIfNeeded(AggregateId(newAggregateId))
 
-    createAggregateActorsIfNeeded(AggregateId(newAggregateId)) ! CommandWithSender(sender(),command)
+    createAggregateActorsIfNeeded(AggregateId(newAggregateId)) ! CommandWithSender(sender,command)
+    println(aggregatesActors)
   }
 
   private def createAggregateActorsIfNeeded(aggregateId: AggregateId): ActorRef = {
     aggregatesActors.getOrElse(aggregateId.asLong, {
-      createAggregateActors(aggregateId)
+      aggregatesActors.update(aggregateId.asLong, createAggregateActors(aggregateId))
+      aggregatesActors(aggregateId.asLong)
     })
   }
 
   private def createAggregateActors(aggregateId: AggregateId) : ActorRef = {
     context.child(aggregateTypeName + "_AggregateRepository_" + aggregateId.asLong).getOrElse(
       context.actorOf(Props(new AggregateRepositoryActor[AGGREGATE](aggregateTypeName + "_AggregateRepository_" + aggregateId.asLong,
-                                                                    aggregateContext) {}))
+        aggregateId, aggregateContext, documentStore) {}),aggregateTypeName + "_AggregateRepository_" + aggregateId.asLong)
     )
   }
 
