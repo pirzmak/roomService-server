@@ -1,11 +1,24 @@
-package me.server.domain.users_api
+package me.server.domain.reservations_api
 
+import java.time.LocalDate
+
+import me.server.domain.users_api.{PersonInfo, PersonalData}
 import me.server.utils.ddd.{AggregateId, AggregateVersion}
 import me.server.utils.cqrs.{Command, CommandResult, FirstCommand, MyCommand}
 
 
-case class CreateUser(email: String, password: String, firstName:String, lastName: String) extends FirstCommand[User, CommandResult]
+case class CreateReservation(from: LocalDate, to: LocalDate, clientInfo: PersonInfo, roomId: AggregateId, discount: Option[Long]) extends FirstCommand[Reservation, CommandResult]
 
-case class UpdateUser(aggregateId: AggregateId, expectedVersion: AggregateVersion, email: Option[String], password: Option[String], firstName: Option[String], lastName: Option[String]) extends Command[User, CommandResult]
+case class ChangeDate(aggregateId:AggregateId, expectedVersion: AggregateVersion, from: Option[LocalDate], to: Option[LocalDate]) extends Command[Reservation, CommandResult]
 
-case class DeleteUser(aggregateId: AggregateId, expectedVersion: AggregateVersion) extends Command[User, CommandResult]
+case class ChangeClientInfo(aggregateId:AggregateId, expectedVersion: AggregateVersion, firstName: Option[String], lastName: Option[String], email: Option[String], phone: Option[String], personalData: Option[PersonalData]) extends Command[Reservation, CommandResult]
+
+case class ChangeRoom(aggregateId:AggregateId, expectedVersion: AggregateVersion, roomId: AggregateId) extends Command[Reservation, CommandResult]
+
+case class ChangeDiscount(aggregateId:AggregateId, expectedVersion: AggregateVersion, discount: Option[Long]) extends Command[Reservation, CommandResult]
+
+case class ChangeLoan(aggregateId:AggregateId, expectedVersion: AggregateVersion, loan: Option[Long]) extends Command[Reservation, CommandResult]
+
+case class DeleteReservation(aggregateId:AggregateId, expectedVersion: AggregateVersion) extends Command[Reservation, CommandResult]
+
+case class ActiveReservation(aggregateId:AggregateId, expectedVersion: AggregateVersion) extends Command[Reservation, CommandResult]
