@@ -12,7 +12,7 @@ class FrontendServer(mainRestService: MainRestService)(implicit val actorSystem:
 
     Http().bindAndHandle(mainRestService.routes, httpHost, httpPort)
 
-    println("Server started")
+    println("Server started",httpHost,httpPort )
 
   }
 

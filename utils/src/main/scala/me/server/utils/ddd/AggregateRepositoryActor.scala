@@ -22,7 +22,7 @@ abstract class AggregateRepositoryActor[AGGREGATE_ROOT](id: String,
                                                         documentStore: DocumentStore[AGGREGATE_ROOT]) extends PersistentActor {
   def persistenceId = id
 
-  private var state = RepositoryAggregateState[AGGREGATE_ROOT](aggregateState = aggregateContext.initialAggregate())
+  protected var state = RepositoryAggregateState[AGGREGATE_ROOT](aggregateState = aggregateContext.initialAggregate())
 
   private def numEvents = state.size
 
@@ -44,7 +44,7 @@ abstract class AggregateRepositoryActor[AGGREGATE_ROOT](id: String,
     case _ => throw CommandException.unknownCommand
   }
 
-  private def handleCommand(command: MyCommand, commandWithSender: CommandWithSender) = {
+  protected def handleCommand(command: MyCommand, commandWithSender: CommandWithSender) = {
     aggregateContext.receiveCommand(command) match {
       case CommandSuccess(e) =>
         persist(MyEvent(e)) {
@@ -52,7 +52,6 @@ abstract class AggregateRepositoryActor[AGGREGATE_ROOT](id: String,
             val aggregate = aggregateContext.receiveEvents(e, state.aggregateState)
             documentStore.insertDocument(aggregateId,state.aggregateVersion,aggregate)
             updateState(event,aggregate)
-            println(state.aggregateVersion)
             commandWithSender.sender ! CommandResult(StatusResponse.success, aggregateId, state.aggregateVersion, "")
           }
         }
@@ -62,6 +61,11 @@ abstract class AggregateRepositoryActor[AGGREGATE_ROOT](id: String,
   }
 
   val receiveRecover: Receive = {
+    case event: MyEvent => {
+      val aggregate = aggregateContext.receiveEvents(event.event, state.aggregateState)
+      documentStore.insertDocument(aggregateId,state.aggregateVersion,aggregate)
+      updateState(event,aggregate)
+    }
     case _ => ()
   }
 

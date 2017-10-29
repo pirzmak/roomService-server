@@ -9,13 +9,13 @@ import me.server.utils.DocumentStore
 
 import scala.concurrent.ExecutionContext
 
-case class AggregateMenagereState(events: List[NewAggregateAdded] = Nil) {
-  def updated(evt: NewAggregateAdded): AggregateMenagereState = copy(evt :: events)
-  def size: Int = events.length
-  override def toString: String = events.reverse.toString
+case class AggregateMenagereState(aggregatesActors: List[AggregateId] = Nil) {
+  def updated(aggregate: AggregateId): AggregateMenagereState = copy(aggregate :: aggregatesActors)
+  def size: Int = aggregatesActors.length
+  override def toString: String = aggregatesActors.reverse.toString
 }
 
-case class NewAggregateAdded()
+case class NewAggregateAdded(id: AggregateId)
 
 class AggregateManager[AGGREGATE](actorId: String,
                                   aggregateContext: AggregateContext[AGGREGATE],
@@ -29,13 +29,13 @@ class AggregateManager[AGGREGATE](actorId: String,
 
   val receiveCommand: Receive = {
     case c: FirstCommand[_,_] =>
-      persist(NewAggregateAdded()) {
-        event: NewAggregateAdded => updateState(event)
-          println(sender(),sender)
-        this.handleFirstCommand(c,sender())
+      val newAggregateId = AggregateId(numEvents)
+      persist(NewAggregateAdded(newAggregateId)) {
+        event: NewAggregateAdded =>
+          updateState(event.id)
+        this.handleFirstCommand(c,sender(),event.id)
       }
     case c: Command[_,_] =>
-      println(aggregatesActors)
       aggregatesActors.get(c.aggregateId.asLong) match {
         case Some(actor) => actor ! CommandWithSender(sender(),c)
         case None => throw new Exception("Aggregate with id " + c.aggregateId + " not exist")
@@ -43,12 +43,18 @@ class AggregateManager[AGGREGATE](actorId: String,
     case _ => throw CommandException.unknownCommand
   }
 
-  private def handleFirstCommand(command: FirstCommand[_,_], sender: ActorRef): Unit = {
+  private def handleFirstCommand(command: FirstCommand[_,_], sender: ActorRef, newId: AggregateId): Unit = {
 
-    val newAggregateId = numEvents
+    val firstActor = createAggregateActorsIfNeeded(newId)
 
-    createAggregateActorsIfNeeded(AggregateId(newAggregateId)) ! CommandWithSender(sender,command)
-    println(aggregatesActors)
+    firstActor ! CommandWithSender(sender,command)
+  }
+
+  private def handleCommand(command: FirstCommand[_,_], sender: ActorRef, aggregateId: AggregateId): Unit = {
+
+    val actor = createAggregateActorsIfNeeded(aggregateId)
+
+    actor ! CommandWithSender(sender,command)
   }
 
   private def createAggregateActorsIfNeeded(aggregateId: AggregateId): ActorRef = {
@@ -66,7 +72,6 @@ class AggregateManager[AGGREGATE](actorId: String,
   }
 
   val receiveRecover: Receive = {
-    case e: NewAggregateAdded => updateState(e)
     case e: Any => println(e)
   }
 
@@ -74,7 +79,7 @@ class AggregateManager[AGGREGATE](actorId: String,
 
   def numEvents = state.size
 
-  def updateState(event: NewAggregateAdded): Unit =
-    state = state.updated(event)
+  def updateState(aggregateId: AggregateId): Unit =
+    state = state.updated(aggregateId)
 
 }
