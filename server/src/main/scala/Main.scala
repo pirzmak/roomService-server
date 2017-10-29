@@ -1,3 +1,5 @@
+import scala.reflect.ClassTag
+
 object Main extends App{
 
   import akka.dispatch.ExecutionContexts._
@@ -6,7 +8,6 @@ object Main extends App{
 
   override def main(args: Array[String]) {
     val context = new Context()
-    context.init()
     context.frontend.start()
   }
 }
