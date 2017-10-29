@@ -45,7 +45,7 @@ abstract class AggregateRepositoryActor[AGGREGATE_ROOT](id: String,
   }
 
   protected def handleCommand(command: MyCommand, commandWithSender: CommandWithSender) = {
-    aggregateContext.receiveCommand(command) match {
+    aggregateContext.receiveCommand(command, state.aggregateState) match {
       case CommandSuccess(e) =>
         persist(MyEvent(e)) {
           event => {

@@ -67,6 +67,4 @@ class UsersSpec() extends TestKit(ActorSystem("UsersSpec")) with ImplicitSender 
       }
     }
   }
-
-
 }

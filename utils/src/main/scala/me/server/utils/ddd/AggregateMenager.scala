@@ -50,13 +50,6 @@ class AggregateManager[AGGREGATE](actorId: String,
     firstActor ! CommandWithSender(sender,command)
   }
 
-  private def handleCommand(command: FirstCommand[_,_], sender: ActorRef, aggregateId: AggregateId): Unit = {
-
-    val actor = createAggregateActorsIfNeeded(aggregateId)
-
-    actor ! CommandWithSender(sender,command)
-  }
-
   private def createAggregateActorsIfNeeded(aggregateId: AggregateId): ActorRef = {
     aggregatesActors.getOrElse(aggregateId.asLong, {
       aggregatesActors.update(aggregateId.asLong, createAggregateActors(aggregateId))

@@ -1,13 +1,19 @@
 package me.server.domain.users_api
 
-import me.server.utils.ddd.AggregateVersion
-
 case class UserId(id: Long) {
   def asLong: Long = id
 }
 
-case class User(email: String, password: String, firstName:String, lastName: String, active: Boolean)
+case class User(loginEmail: String, password: String, personInfo: PersonInfo, active: Boolean)
 
 object User {
-  val empty = User("","","","",true)
+  val empty = User("","",PersonInfo.empty,true)
 }
+
+case class PersonInfo(firstName:String, lastName: String, email: String, phone: String, personalData: Option[PersonalData])
+
+object PersonInfo {
+  val empty = PersonInfo("", "", "", "", None)
+}
+
+case class PersonalData(adress: String)
