@@ -1,11 +1,25 @@
-package me.server.domain.users_api
+package me.server.domain.reservations_api
 
+import java.time.LocalDate
+
+import me.server.domain.users_api.{PersonInfo, PersonalData}
 import me.server.utils.cqrs.Event
+import me.server.utils.ddd.AggregateId
 
-sealed trait UserEvent extends Event
+sealed trait ReservationEvent extends Event
 
-case class UserCreated(id: UserId, email: String, password: String, firstName:String, lastName: String) extends UserEvent
+case class ReservationCreated(from: LocalDate, to: LocalDate, clientInfo: PersonInfo, roomId: AggregateId, discount: Option[Long]) extends ReservationEvent
 
-case class UserUpdated(email: Option[String], password: Option[String], firstName: Option[String], lastName: Option[String]) extends UserEvent
+case class DateChanged(from: Option[LocalDate], to: Option[LocalDate]) extends ReservationEvent
 
-case class UserDeleted() extends UserEvent
+case class ClientInfoChanged(firstName: Option[String], lastName: Option[String], email: Option[String], phone: Option[String], personalData: Option[PersonalData]) extends ReservationEvent
+
+case class RoomChanged(oldRoomId: AggregateId, newRoomId: AggregateId) extends ReservationEvent
+
+case class DiscountChanged(discount: Option[Long]) extends ReservationEvent
+
+case class LoanChanged(loan: Option[Long]) extends ReservationEvent
+
+case class ReservationDeleted() extends ReservationEvent
+
+case class ReservationActived() extends ReservationEvent
