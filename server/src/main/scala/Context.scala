@@ -1,13 +1,11 @@
 import akka.actor.{ActorSystem, Props}
 import akka.dispatch.ExecutionContexts.global
 import me.server.domain.users.UsersAggregateContext
-import me.server.domain.users_api.{CreateUser, User}
+import me.server.domain.users_api.{User}
 import me.server.frontend.{FrontendServer, MainRestService}
 import me.server.frontend.http.rest.UsersServiceRoute
 import me.server.utils.MockDocumentStore
 import me.server.utils.ddd.AggregateManager
-import users.{UserDocumentDocumentStore, UserProjection}
-import users_api.GetUserById
 
 class Context {
 

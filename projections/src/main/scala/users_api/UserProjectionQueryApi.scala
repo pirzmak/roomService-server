@@ -9,7 +9,7 @@ import scala.concurrent.Future
 
 class UserProjectionQueryApi(projection: ActorRef)(implicit akkaTimeout: Timeout) {
 
-  def findUserById(query: GetUserById): Future[User] = {
+  def findUserById(query: FindUserById): Future[User] = {
     (projection ? query).mapTo[User]
   }
 

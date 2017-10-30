@@ -15,7 +15,7 @@ import org.scalatest.{BeforeAndAfterAll, GivenWhenThen, Matchers, WordSpecLike}
 
 import scala.concurrent.duration._
 
-class ReservationSpec() extends TestKit(ActorSystem("ReservationSpec")) with ImplicitSender with GivenWhenThen
+class ReservationSpec() extends TestKit(ActorSystem("ReservationSpec")) with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {
 
   implicit val ec = global
@@ -30,7 +30,6 @@ class ReservationSpec() extends TestKit(ActorSystem("ReservationSpec")) with Imp
   val reservationAggContext = new ReservationsAggregateContext()
   val documentStore = new MockDocumentStore[Reservation]
 
-  When("Actor Reservation added msg")
   "An Reservation actor" must {
 
     "get result with 1 aggregate and 1 version" in {
@@ -51,7 +50,6 @@ class ReservationSpec() extends TestKit(ActorSystem("ReservationSpec")) with Imp
   }
 
 
-  When("Actor Reservation updated msg")
   "An Reservation actor" must {
 
     "get result with 1 aggregate and next version" in {

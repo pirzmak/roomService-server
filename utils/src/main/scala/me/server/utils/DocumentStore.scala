@@ -18,7 +18,6 @@ class MockDocumentStore[T] extends DocumentStore[T]{
 
   override def getDocumentById(aggregateId: AggregateId): Option[Aggregate[T]] = documents.find(_.aggregateId.asLong == aggregateId.asLong)
 
-
 }
 
 case class Aggregate[T] (aggregateId: AggregateId, version: AggregateVersion, aggregate: T)

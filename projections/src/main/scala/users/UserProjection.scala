@@ -6,7 +6,7 @@ import me.server.domain.users_api.{User, UserCreated}
 import me.server.utils.cqrs.{MyEvent, ProjectionActor}
 import me.server.utils.ddd.{AggregateId, AggregateVersion}
 import me.server.utils.{Aggregate, DocumentStore}
-import users_api.{GetAllUsers, GetUserById}
+import users_api.{GetAllUsers, FindUserById}
 
 import scala.concurrent.ExecutionContext
 
