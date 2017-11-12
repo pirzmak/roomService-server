@@ -2,11 +2,12 @@ package me.server.domain.reservations
 
 import java.time.LocalDate
 
-import me.server.domain.reservations_api._
+import me.server.domain_api.reservations_api._
+import me.server.projections_api.rooms_occupancy_api.RoomsOccupancyQueryApi
 import me.server.utils.cqrs.{CommandFailure, CommandResponse, CommandSuccess}
 import me.server.utils.ddd.AggregateId
 
-object ReservationsCommandHandler {
+class ReservationsCommandHandler(roomOccupancyProjection: RoomsOccupancyQueryApi) {
   def handleCreateReservation(c: CreateReservation): CommandResponse = {
     val errors = reservationValidate(c.from, c.to, c.roomId)
     if(errors.isEmpty)
@@ -52,9 +53,8 @@ object ReservationsCommandHandler {
 
   private def reservationValidate(from: LocalDate, to: LocalDate, roomId: AggregateId): List[String] = {
     var errors: List[String] = List.empty
-    errors ::: dateValidate(from, to)
     //TODO check if room exists and is free
-    errors
+    errors ::: dateValidate(from, to)
   }
 
   private def dateValidate(from: LocalDate, to: LocalDate): List[String] = {

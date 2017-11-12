@@ -1,6 +1,6 @@
 package me.server.domain.users
 
-import me.server.domain.users_api.{PersonInfo, User, UserCreated, UserUpdated}
+import me.server.domain_api.users_api.{PersonInfo, User, UserCreated, UserUpdated}
 
 object UsersEventHandler {
   def handleUserCreated(e: UserCreated): User = {

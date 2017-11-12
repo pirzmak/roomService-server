@@ -1,21 +1,23 @@
 package me.server.domain.reservations
 
-import me.server.domain.reservations_api._
-import me.server.domain.users_api._
+import me.server.domain_api.reservations_api._
+import me.server.projections_api.rooms_occupancy_api.RoomsOccupancyQueryApi
 import me.server.utils.cqrs._
 import me.server.utils.ddd.AggregateContext
 
-class ReservationsAggregateContext() extends AggregateContext[Reservation] {
+class ReservationsAggregateContext(roomsOccupancyQueryApi: RoomsOccupancyQueryApi) extends AggregateContext[Reservation] {
+
+  var reservationsCommandHandler = new ReservationsCommandHandler(roomsOccupancyQueryApi)
 
   def receiveCommand(command: MyCommand, reservation: Reservation): CommandResponse = command match {
-    case c: CreateReservation => ReservationsCommandHandler.handleCreateReservation(c)
-    case c: ChangeDate => ReservationsCommandHandler.handleChangeDate(c, reservation)
-    case c: ChangeClientInfo => ReservationsCommandHandler.handleChangeClientInfo(c)
-    case c: ChangeRoom => ReservationsCommandHandler.handleChangeRoom(c, reservation)
-    case c: ChangeDiscount => ReservationsCommandHandler.handleChangeDiscount(c)
-    case c: ChangeLoan => ReservationsCommandHandler.handleChangeLoan(c)
-    case c: DeleteReservation => ReservationsCommandHandler.handleDeleteReservation(c)
-    case c: ActiveReservation => ReservationsCommandHandler.handleActiveReservation(c)
+    case c: CreateReservation => reservationsCommandHandler.handleCreateReservation(c)
+    case c: ChangeDate => reservationsCommandHandler.handleChangeDate(c, reservation)
+    case c: ChangeClientInfo => reservationsCommandHandler.handleChangeClientInfo(c)
+    case c: ChangeRoom => reservationsCommandHandler.handleChangeRoom(c, reservation)
+    case c: ChangeDiscount => reservationsCommandHandler.handleChangeDiscount(c)
+    case c: ChangeLoan => reservationsCommandHandler.handleChangeLoan(c)
+    case c: DeleteReservation => reservationsCommandHandler.handleDeleteReservation(c)
+    case c: ActiveReservation => reservationsCommandHandler.handleActiveReservation(c)
 
     case _ => throw CommandException.unknownCommand
   }

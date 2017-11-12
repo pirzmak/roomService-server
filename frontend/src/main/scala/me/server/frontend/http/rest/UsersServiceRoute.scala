@@ -4,7 +4,7 @@ import akka.actor.ActorRef
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.directives.SecurityDirectives
 import akka.util.Timeout
-import me.server.domain.users_api.CreateUser
+import me.server.domain_api.users_api.CreateUser
 import me.server.frontend.json.JsonSupport
 import akka.pattern.ask
 import me.server.utils.cqrs.CommandResult
@@ -17,13 +17,5 @@ class UsersServiceRoute(val userRepository: ActorRef)(implicit executionContext:
 
   implicit val timeout = Timeout(25 seconds)
 
-  val routes = pathPrefix("users") {
-    path("new") {
-      post {
-        entity(as[CreateUser]) { createUser =>
-            complete((userRepository ? createUser).mapTo[CommandResult])
-        }
-      }
-    }
-  }
+  val routes = ""
 }

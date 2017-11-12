@@ -1,6 +1,6 @@
 package me.server.domain.users
 
-import me.server.domain.users_api._
+import me.server.domain_api.users_api._
 import me.server.utils.cqrs._
 import me.server.utils.ddd.AggregateContext
 
