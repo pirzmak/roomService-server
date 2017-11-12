@@ -11,7 +11,9 @@ import me.server.utils.cqrs.ProjectionActor
 import scala.concurrent.ExecutionContext
 
 class ReservationProjection(projectionId: String, aggregateId: String, documentStore: DocumentStore[Reservation])
-                           (implicit system: ActorSystem, implicit val ec: ExecutionContext) extends ProjectionActor(projectionId, aggregateId) {
+                           (implicit system: ActorSystem, implicit val ec: ExecutionContext) extends ProjectionActor {
+
+  def persistenceId = projectionId
 
   override val receiveCommand: Receive = {
     case m: GetAllReservations => sender() ! getAllReservations()

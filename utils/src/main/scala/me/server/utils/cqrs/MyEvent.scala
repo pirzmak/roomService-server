@@ -1,6 +1,6 @@
 package me.server.utils.cqrs
 
-import me.server.utils.ddd.{AggregateId}
+import me.server.utils.ddd.AggregateId
 
 trait Event
 

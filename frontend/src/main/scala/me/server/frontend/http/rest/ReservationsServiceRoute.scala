@@ -18,7 +18,7 @@ class ReservationsServiceRoute(val reservationsRepository: ActorRef,
 
   implicit val timeout = Timeout(25 seconds)
 
-  val routes =  {
+  val routes = {
     path("get-all") {
       get {
         complete(reservationsProjectionQueryApi.getAllReservations(GetAllReservations()))

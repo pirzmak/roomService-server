@@ -74,37 +74,4 @@ class RoomsOccupancyProjectionSpec extends TestKit(ActorSystem("ReservaationsPro
       expectMsg(List(AggregateId(1),AggregateId(0)))
     }
   }
-
-  "An Reservation actor with 2 spcific date" must {
-//    val documentStore = new MockDocumentStore[Reservation]
-//    val dateFrom1 = LocalDate.of(2017,6,6)
-//    val dateTo1 = LocalDate.of(2017,6,15)
-//    val dateFrom2 = LocalDate.of(2017,7,10)
-//    val dateTo2 = LocalDate.of(2017,7,18)
-//    documentStore.insertDocument(AggregateId(0),AggregateVersion(1),Reservation(dateFrom1,dateTo1,PersonInfo.empty,AggregateId(0),0,None,None,false))
-//    documentStore.insertDocument(AggregateId(0),AggregateVersion(1),Reservation(dateFrom2,dateTo2,PersonInfo.empty,AggregateId(0),0,None,None,false))
-//
-//    "get result from 2017.06.01 to 2017.06.12" in {
-//      val commandHandler = system.actorOf(Props(new ReservationProjection("Test","TestP",documentStore)))
-//
-//      commandHandler ! GetReservationsFromTo(LocalDate.of(2017,6,1),LocalDate.of(2017,6,12))
-//      expectMsg(List(Aggregate(AggregateId(0),AggregateVersion(1),Reservation(dateFrom1,dateTo1,PersonInfo.empty,AggregateId(0),0,None,None,false))))
-//    }
-//
-//    "get result from 2017.06.01 to 2017.06.03" in {
-//      val commandHandler = system.actorOf(Props(new ReservationProjection("Test","TestP",documentStore)))
-//
-//      commandHandler ! GetReservationsFromTo(LocalDate.of(2017,6,1),LocalDate.of(2017,6,3))
-//      expectMsg(List.empty)
-//    }
-//
-//    "get result from 2017.06.01 to 2017.09.03" in {
-//      val commandHandler = system.actorOf(Props(new ReservationProjection("Test","TestP",documentStore)))
-//
-//      commandHandler ! GetReservationsFromTo(LocalDate.of(2017,6,1),LocalDate.of(2017,6,3))
-//      expectMsg(List(Aggregate(AggregateId(0),AggregateVersion(1),Reservation(dateFrom1,dateTo1,PersonInfo.empty,AggregateId(0),0,None,None,false)),
-//        Aggregate(AggregateId(0),AggregateVersion(1),Reservation(dateFrom2,dateTo2,PersonInfo.empty,AggregateId(0),0,None,None,false))))
-//    }
-  }
-
 }

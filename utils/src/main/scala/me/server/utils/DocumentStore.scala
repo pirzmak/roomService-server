@@ -4,6 +4,7 @@ import me.server.utils.ddd.{AggregateId, AggregateVersion}
 
 abstract class DocumentStore[T] {
   def insertDocument(aggregateId: AggregateId, aggregateVersion: AggregateVersion, aggregate: T)
+  def upsertDocument(aggregateId: AggregateId, aggregateVersion: AggregateVersion, aggregate: T)
   def getDocumentById(aggregateId: AggregateId): Option[Aggregate[T]]
   def getAll: Iterable[Aggregate[T]]
 }
@@ -13,6 +14,13 @@ class MockDocumentStore[T] extends DocumentStore[T]{
 
   override def insertDocument(aggregateId: AggregateId, aggregateVersion: AggregateVersion, aggregate: T): Unit =
     documents = Aggregate(aggregateId,aggregateVersion,aggregate) :: documents
+
+  override def upsertDocument(aggregateId: AggregateId, aggregateVersion: AggregateVersion, aggregate: T): Unit = {
+    if(documents.exists(_.aggregateId.asLong == aggregateId.asLong))
+      documents = documents.map(d => if(d.aggregateId == aggregateId) Aggregate(aggregateId,aggregateVersion,aggregate) else d)
+    else
+      documents = Aggregate(aggregateId,aggregateVersion,aggregate) :: documents
+  }
 
   override def getAll: Iterable[Aggregate[T]] = documents
 

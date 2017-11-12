@@ -4,11 +4,13 @@ import akka.actor.{ActorSystem, Props}
 import akka.dispatch.ExecutionContexts.global
 import akka.util.Timeout
 import me.server.domain.reservations.ReservationsAggregateContext
+import me.server.domain.rooms.RoomsAggregateContext
 import me.server.domain_api.reservations_api.Reservation
 import me.server.domain.users.UsersAggregateContext
+import me.server.domain_api.rooms_api.{CreateRoom, Room, RoomInfo}
 import me.server.domain_api.users_api.{PersonInfo, User}
 import me.server.frontend.{FrontendServer, MainRestService}
-import me.server.frontend.http.rest.{ReservationsServiceRoute, UsersServiceRoute}
+import me.server.frontend.http.rest.{ReservationsServiceRoute, RoomsServiceRoute, UsersServiceRoute}
 import me.server.projections.reservations.ReservationProjection
 import me.server.projections.rooms_occupancy.RoomsOccupancyProjection
 import me.server.utils.MockDocumentStore
@@ -31,6 +33,8 @@ class Context {
     reservationsDocumentStore.insertDocument(AggregateId(-2),AggregateVersion(1),
       Reservation(LocalDate.now(),LocalDate.now().plusWeeks(1),PersonInfo("Jon","Doe","","",None),AggregateId(1),10,None,None,false))
 
+    val roomsDocumentStore = new MockDocumentStore[Room]
+
     val roomsOccupancyDocumentStore = new MockDocumentStore[RoomsOccupancy]
 
 
@@ -41,11 +45,17 @@ class Context {
     val roomsOccupancyProjection = system.actorOf(Props(new RoomsOccupancyProjection("RoomsOccupancyProjection","RoomsOccupancyManager",roomsOccupancyDocumentStore)))
     val roomsOccupancyQueryApi = new RoomsOccupancyQueryApi(roomsOccupancyProjection)
 
+    //context
     val reservationsContextActor = new ReservationsAggregateContext(roomsOccupancyQueryApi)
-    val commandHandler = system.actorOf(Props(new AggregateManager[Reservation]("ReservationManager",reservationsContextActor, reservationsDocumentStore)),"ReservationManagerActor")
+    val reservationCommandHandler = system.actorOf(Props(new AggregateManager[Reservation]("ReservationManager",reservationsContextActor, reservationsDocumentStore)),"ReservationManagerActor")
 
-    val reservationsServiceRoute = new ReservationsServiceRoute(commandHandler, reservationProjectionQueryApi)
-    val mainRestServiceActor = new MainRestService(reservationsServiceRoute)
+    val roomsContextActor = new RoomsAggregateContext()
+    val roomCommandHandler = system.actorOf(Props(new AggregateManager[Room]("RoomManager",roomsContextActor, roomsDocumentStore)),"RoomManagerActor")
+
+    //services
+    val reservationsServiceRoute = new ReservationsServiceRoute(reservationCommandHandler, reservationProjectionQueryApi)
+    val roomsServiceRoute = new RoomsServiceRoute()
+    val mainRestServiceActor = new MainRestService(reservationsServiceRoute, roomsServiceRoute)
 
     val frontend = new FrontendServer(mainRestServiceActor)(system)
 

@@ -9,35 +9,11 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 
 
-trait EventEvaluator {
-  def eventEvaluator(event : MyEvent){}
-}
-
 trait receiverQuery {
   def receiveQuery()
 }
 
-abstract class ProjectionActor(projectionId: String, aggregateId: String)(implicit system: ActorSystem)
-  extends PersistentActor with EventEvaluator{
-  def persistenceId = projectionId
-
-  lazy val readJournal = PersistenceQuery(system).readJournalFor("inmemory-read-journal")
-    .asInstanceOf[ReadJournal
-    with CurrentPersistenceIdsQuery
-    with CurrentEventsByPersistenceIdQuery
-    with CurrentEventsByTagQuery
-    with EventsByPersistenceIdQuery
-    with EventsByTagQuery]
-
-  val source: Source[EventEnvelope, NotUsed] =
-    readJournal.eventsByPersistenceId(aggregateId, 0, Long.MaxValue)
-
-  implicit val mat = ActorMaterializer()
-
-  source.runForeach { event =>  event.event match {
-    case e: MyEvent => eventEvaluator(e)
-    case _ => throw new Exception("Dupa")
-  } }
+abstract class ProjectionActor extends PersistentActor {
 
   val receiveCommand: Receive = {
     case _ => ()
