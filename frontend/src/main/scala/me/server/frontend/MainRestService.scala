@@ -9,7 +9,12 @@ class MainRestService(reservationsServiceRoute: ReservationsServiceRoute) extend
   val routes =
       pathPrefix("") {
         corsHandler {
-          reservationsServiceRoute.routes
+          pathPrefix("reservations") {
+            reservationsServiceRoute.routes
+          } ~
+            pathPrefix("rooms") {
+              reservationsServiceRoute.routes
+            }
         }
       }
 

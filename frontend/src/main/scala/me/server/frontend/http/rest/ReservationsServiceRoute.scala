@@ -18,7 +18,7 @@ class ReservationsServiceRoute(val reservationsRepository: ActorRef,
 
   implicit val timeout = Timeout(25 seconds)
 
-  val routes = pathPrefix("reservations") {
+  val routes =  {
     path("get-all") {
       get {
         complete(reservationsProjectionQueryApi.getAllReservations(GetAllReservations()))
@@ -27,7 +27,6 @@ class ReservationsServiceRoute(val reservationsRepository: ActorRef,
       path("create") {
         post {
           entity(as[CreateReservation]) { message =>
-            println(message)
             complete((reservationsRepository ? message).mapTo[CommandResult])
           }
         }
