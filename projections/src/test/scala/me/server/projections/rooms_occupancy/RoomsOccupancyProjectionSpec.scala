@@ -6,7 +6,6 @@ import akka.actor.{ActorSystem, Props}
 import akka.dispatch.ExecutionContexts.global
 import akka.testkit.{ImplicitSender, TestKit}
 import akka.util.Timeout
-import me.server.domain.reservations.ReservationsAggregateContext
 import me.server.projections_api.rooms_occupancy_api.{CheckRoomOccupancy, FindFreeRooms, GetRoomOccupancyById, RoomsOccupancy}
 import me.server.utils.MockDocumentStore
 import me.server.utils.ddd.{AggregateId, AggregateVersion}

@@ -1,6 +1,7 @@
 package me.server.utils.ddd
 
 import akka.persistence.PersistentActor
+import akka.persistence.journal.Tagged
 import me.server.utils.DocumentStore
 import me.server.utils.cqrs._
 

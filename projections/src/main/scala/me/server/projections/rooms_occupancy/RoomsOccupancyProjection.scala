@@ -17,7 +17,7 @@ class RoomsOccupancyProjection(projectionId: String, aggregateId: String, docume
 
   def persistenceId = projectionId
 
-  val reservationEventListener = new EventsListener(aggregateId, eventListening)
+  val reservationEventListener = new EventsListener("ReservationManager", eventListening)
 
   def eventListening(event: MyEvent) = event.event match {
     case e: ReservationCreated => addNewRoomOccupancy(event.aggregateId, e)

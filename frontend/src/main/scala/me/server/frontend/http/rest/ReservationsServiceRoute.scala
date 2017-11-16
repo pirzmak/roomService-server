@@ -14,7 +14,8 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 class ReservationsServiceRoute(val reservationsRepository: ActorRef,
-                               val reservationsProjectionQueryApi: ReservationProjectionQueryApi)(implicit executionContext: ExecutionContext) extends SecurityDirectives with JsonSupport {
+                               val reservationsProjectionQueryApi: ReservationProjectionQueryApi)
+                              (implicit executionContext: ExecutionContext) extends SecurityDirectives with JsonSupport {
 
   implicit val timeout = Timeout(25 seconds)
 

@@ -5,12 +5,11 @@ import akka.dispatch.ExecutionContexts.global
 import akka.util.Timeout
 import me.server.domain.reservations.ReservationsAggregateContext
 import me.server.domain.rooms.RoomsAggregateContext
-import me.server.domain_api.reservations_api.Reservation
-import me.server.domain.users.UsersAggregateContext
-import me.server.domain_api.rooms_api.{CreateRoom, Room, RoomInfo}
-import me.server.domain_api.users_api.{PersonInfo, User}
+import me.server.domain_api.reservations_api.{CreateReservation, Reservation}
+import me.server.domain_api.rooms_api.Room
+import me.server.domain_api.users_api.PersonInfo
 import me.server.frontend.{FrontendServer, MainRestService}
-import me.server.frontend.http.rest.{ReservationsServiceRoute, RoomsServiceRoute, UsersServiceRoute}
+import me.server.frontend.http.rest.{ReservationsServiceRoute, RoomsServiceRoute}
 import me.server.projections.reservations.ReservationProjection
 import me.server.projections.rooms_occupancy.RoomsOccupancyProjection
 import me.server.utils.MockDocumentStore
@@ -49,6 +48,7 @@ class Context {
     val reservationsContextActor = new ReservationsAggregateContext(roomsOccupancyQueryApi)
     val reservationCommandHandler = system.actorOf(Props(new AggregateManager[Reservation]("ReservationManager",reservationsContextActor, reservationsDocumentStore)),"ReservationManagerActor")
 
+    reservationCommandHandler ! CreateReservation(LocalDate.now(), LocalDate.now().plusDays(2), PersonInfo.empty, AggregateId(0), None)
     val roomsContextActor = new RoomsAggregateContext()
     val roomCommandHandler = system.actorOf(Props(new AggregateManager[Room]("RoomManager",roomsContextActor, roomsDocumentStore)),"RoomManagerActor")
 
