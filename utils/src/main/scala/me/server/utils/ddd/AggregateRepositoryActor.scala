@@ -1,7 +1,6 @@
 package me.server.utils.ddd
 
 import akka.persistence.PersistentActor
-import akka.persistence.journal.Tagged
 import me.server.utils.DocumentStore
 import me.server.utils.cqrs._
 
@@ -48,7 +47,7 @@ abstract class AggregateRepositoryActor[AGGREGATE_ROOT](id: String,
   protected def handleCommand(command: MyCommand, commandWithSender: CommandWithSender) = {
     aggregateContext.receiveCommand(command, state.aggregateState) match {
       case CommandSuccess(e) =>
-        persist(MyEvent(e)) {
+        persist(MyEvent(e,aggregateId)) {
           event => {
             val aggregate = aggregateContext.receiveEvents(e, state.aggregateState)
             documentStore.insertDocument(aggregateId,state.aggregateVersion,aggregate)

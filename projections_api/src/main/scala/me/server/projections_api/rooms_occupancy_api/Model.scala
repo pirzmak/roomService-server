@@ -4,4 +4,6 @@ import java.time.LocalDate
 
 import me.server.utils.ddd.AggregateId
 
-case class RoomsOccupancy(roomId: AggregateId, occupancy: List[(LocalDate,LocalDate)])
+case class RoomsOccupancy(occupancy: List[ReservationInfo])
+
+case class ReservationInfo(reservationID: AggregateId, from: LocalDate, to: LocalDate)

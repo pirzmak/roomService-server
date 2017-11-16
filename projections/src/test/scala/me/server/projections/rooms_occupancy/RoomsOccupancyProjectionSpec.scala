@@ -6,7 +6,7 @@ import akka.actor.{ActorSystem, Props}
 import akka.dispatch.ExecutionContexts.global
 import akka.testkit.{ImplicitSender, TestKit}
 import akka.util.Timeout
-import me.server.projections_api.rooms_occupancy_api.{CheckRoomOccupancy, FindFreeRooms, GetRoomOccupancyById, RoomsOccupancy}
+import me.server.projections_api.rooms_occupancy_api._
 import me.server.utils.MockDocumentStore
 import me.server.utils.ddd.{AggregateId, AggregateVersion}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
@@ -35,7 +35,7 @@ class RoomsOccupancyProjectionSpec extends TestKit(ActorSystem("ReservaationsPro
 
     "get result with 1 aggregate" in {
       val documentStore = new MockDocumentStore[RoomsOccupancy]
-      documentStore.insertDocument(AggregateId(0),AggregateVersion(1),RoomsOccupancy(AggregateId(0), List((LocalDate.now(), LocalDate.now().plusDays(7)))))
+      documentStore.insertDocument(AggregateId(0),AggregateVersion(1),RoomsOccupancy(List(ReservationInfo(AggregateId(0), LocalDate.now(), LocalDate.now().plusDays(7)))))
       val commandHandler = system.actorOf(Props(new RoomsOccupancyProjection("Test","TestP",documentStore)))
 
       commandHandler ! GetRoomOccupancyById(AggregateId(0))
@@ -44,7 +44,7 @@ class RoomsOccupancyProjectionSpec extends TestKit(ActorSystem("ReservaationsPro
 
     "get result for 1 room and specific date" in {
       val documentStore = new MockDocumentStore[RoomsOccupancy]
-      documentStore.insertDocument(AggregateId(0),AggregateVersion(1),RoomsOccupancy(AggregateId(0), List((LocalDate.now(), LocalDate.now().plusDays(7)))))
+      documentStore.insertDocument(AggregateId(0),AggregateVersion(1),RoomsOccupancy(List(ReservationInfo(AggregateId(0), LocalDate.now(), LocalDate.now().plusDays(7)))))
       val commandHandler = system.actorOf(Props(new RoomsOccupancyProjection("Test","TestP",documentStore)))
 
       commandHandler ! CheckRoomOccupancy(AggregateId(0),LocalDate.now(), LocalDate.now().plusDays(7))
@@ -63,8 +63,8 @@ class RoomsOccupancyProjectionSpec extends TestKit(ActorSystem("ReservaationsPro
 
     "find free room" in {
       val documentStore = new MockDocumentStore[RoomsOccupancy]
-      documentStore.insertDocument(AggregateId(0),AggregateVersion(1),RoomsOccupancy(AggregateId(0), List((LocalDate.now(), LocalDate.now().plusDays(7)),(LocalDate.now().plusDays(12), LocalDate.now().plusDays(15)))))
-      documentStore.insertDocument(AggregateId(1),AggregateVersion(1),RoomsOccupancy(AggregateId(1), List((LocalDate.now().plusDays(12), LocalDate.now().plusDays(15)))))
+      documentStore.insertDocument(AggregateId(0),AggregateVersion(1),RoomsOccupancy(List(ReservationInfo(AggregateId(0), LocalDate.now(), LocalDate.now().plusDays(7)),ReservationInfo(AggregateId(0), LocalDate.now().plusDays(12), LocalDate.now().plusDays(15)))))
+      documentStore.insertDocument(AggregateId(1),AggregateVersion(1),RoomsOccupancy(List(ReservationInfo(AggregateId(0),LocalDate.now().plusDays(12), LocalDate.now().plusDays(15)))))
       val commandHandler = system.actorOf(Props(new RoomsOccupancyProjection("Test","TestP",documentStore)))
 
       commandHandler ! FindFreeRooms(LocalDate.now().plusDays(5), LocalDate.now().plusDays(12))
