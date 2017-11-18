@@ -34,9 +34,9 @@ abstract class AggregateRepositoryActor[AGGREGATE_ROOT](id: String,
       case c: FirstCommand[_, _] =>
         handleCommand(c, commandWithSender)
       case c: Command[_, _] =>
-        if (c.expectedVersion.version == state.aggregateVersion.next.version)
+        if (c.expectedVersion.version != state.aggregateVersion.next.version)
           commandWithSender.sender ! CommandResult(StatusResponse.failure, c.aggregateId, c.expectedVersion,
-            "Expected version: " + state.aggregateVersion.next.version + " but get: " + c.expectedVersion)
+            "Expected version: " + state.aggregateVersion.next.version + " but get: " + c.expectedVersion.version)
         else
           handleCommand(c, commandWithSender)
       case _ => throw CommandException.unknownCommand
@@ -47,7 +47,7 @@ abstract class AggregateRepositoryActor[AGGREGATE_ROOT](id: String,
   protected def handleCommand(command: MyCommand, commandWithSender: CommandWithSender) = {
     aggregateContext.receiveCommand(command, state.aggregateState) match {
       case CommandSuccess(e) =>
-        persist(MyEvent(e)) {
+        persist(MyEvent(e,aggregateId)) {
           event => {
             val aggregate = aggregateContext.receiveEvents(e, state.aggregateState)
             documentStore.insertDocument(aggregateId,state.aggregateVersion,aggregate)

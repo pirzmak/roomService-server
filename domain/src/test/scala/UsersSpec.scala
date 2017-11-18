@@ -4,7 +4,7 @@ import akka.util.Timeout
 import akka.dispatch.ExecutionContexts.global
 import akka.testkit.{ImplicitSender, TestKit}
 import me.server.domain.users.UsersAggregateContext
-import me.server.domain.users_api.{CreateUser, DeleteUser, UpdateUser, User}
+import me.server.domain_api.users_api.{CreateUser, DeleteUser, UpdateUser, User}
 import me.server.utils.{DocumentStore, MockDocumentStore}
 import me.server.utils.ddd.{AggregateId, AggregateManager, AggregateVersion}
 import me.server.utils.cqrs.{CommandResult, StatusResponse}
@@ -33,7 +33,7 @@ class UsersSpec() extends TestKit(ActorSystem("UsersSpec")) with ImplicitSender 
   "An User actor" must {
 
     "get result with 1 aggregate and 1 version" in {
-      val commandHandler = system.actorOf(Props(new TestAggregateRepositoryActor[User](AggregateId(-1),userAggContext,documentStore)))
+      val commandHandler = system.actorOf(Props(new TestAggregateRepositoryActor[User](AggregateId(-1),List.empty,userAggContext,documentStore)))
 
       commandHandler ! CreateUser("mail","pas", "adam", "haslo")
       expectMsgPF() {
@@ -46,25 +46,11 @@ class UsersSpec() extends TestKit(ActorSystem("UsersSpec")) with ImplicitSender 
   "An User actor" must {
 
     "get result with 1 aggregate and 2 version" in {
-      val commandHandler = system.actorOf(Props(new TestAggregateRepositoryActor[User](AggregateId(-1),userAggContext,documentStore)))
+      val commandHandler = system.actorOf(Props(new TestAggregateRepositoryActor[User](AggregateId(-1),List.empty,userAggContext,documentStore)))
 
       commandHandler ! CreateUser("mail","pas", "adam", "haslo")
       commandHandler ! UpdateUser(AggregateId(-1), AggregateVersion(1),None ,None , None, Some("a"))
       expectMsg(CommandResult(StatusResponse.success, AggregateId(-1), AggregateVersion(2), ""))
-    }
-  }
-
-  When("Actor user deleted msg")
-  "An User actor" must {
-
-    "get result" in {
-      val commandHandler = system.actorOf(Props(new TestAggregateRepositoryActor[User](AggregateId(-1),userAggContext,documentStore)))
-
-      commandHandler ! CreateUser("mail","pas", "adam", "haslo")
-      commandHandler ! DeleteUser(AggregateId(-1), AggregateVersion(1))
-      expectMsgPF() {
-        case CommandResult(StatusResponse.success, _, _, "") => ()
-      }
     }
   }
 }

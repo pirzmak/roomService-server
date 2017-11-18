@@ -1,7 +1,7 @@
 package me.server.domain.reservations
 
-import me.server.domain.reservations_api._
-import me.server.domain.users_api.PersonInfo
+import me.server.domain_api.reservations_api._
+import me.server.domain_api.users_api.PersonInfo
 
 
 object ReservationsEventHandler {
