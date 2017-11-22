@@ -5,11 +5,13 @@ import java.time.format.DateTimeFormatter
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import me.server.domain_api.reservations_api._
+import me.server.domain_api.rooms_api.{Room, RoomInfo}
 import me.server.domain_api.users_api.{CreateUser, PersonInfo, PersonalData, UserId}
 import me.server.utils.Aggregate
 import me.server.utils.cqrs.{CommandResult, StatusResponse}
 import me.server.utils.ddd.{AggregateId, AggregateVersion}
 import me.server.projections_api.reservations_api.GetAllReservations
+import me.server.projections_api.rooms_api.GetAllRooms
 import spray.json._
 
 
@@ -34,14 +36,13 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 
   //User
   implicit val userIdJsonFormat = jsonFormat1(UserId.apply)
-
   implicit val createUserJsonFormat = jsonFormat4(CreateUser)
 
   //Reservations
   implicit val personalDataJsonFormat = jsonFormat1(PersonalData)
   implicit val personInfoJsonFormat = jsonFormat5(PersonInfo.apply)
   implicit val reservationJsonFormat = jsonFormat8(Reservation.apply)
-  implicit val aggregateJsonFormat = jsonFormat3(Aggregate.apply[Reservation])
+  implicit val aggregateReservationJsonFormat = jsonFormat3(Aggregate.apply[Reservation])
 
   implicit val getAllReservationsJsonFormat = jsonFormat0(GetAllReservations)
 
@@ -53,4 +54,11 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val changeLoanReservationJsonFormat = jsonFormat3(ChangeLoan)
   implicit val deleteReservationJsonFormat = jsonFormat2(DeleteReservation)
   implicit val activeLoanReservationJsonFormat = jsonFormat2(ActiveReservation)
+
+  //Rooms
+  implicit val roomInfoJsonFormat = jsonFormat2(RoomInfo)
+  implicit val roomJsonFormat = jsonFormat4(Room.apply)
+  implicit val aggregateRoomJsonFormat = jsonFormat3(Aggregate.apply[Room])
+
+  implicit val getAllRoomsJsonFormat = jsonFormat0(GetAllRooms)
 }

@@ -4,7 +4,6 @@ import java.time.LocalDate
 
 import akka.actor.ActorSystem
 import me.server.domain_api.reservations_api.{DateChanged, ReservationCreated, ReservationEvent, RoomChanged}
-import me.server.projections_api.reservations_api.{GetReservationById, ReservationProjectionQueryApi}
 import me.server.projections_api.rooms_occupancy_api._
 import me.server.utils.cqrs.{EventsListener, MyEvent, ProjectionActor}
 import me.server.utils.ddd.{AggregateId, AggregateVersion}
