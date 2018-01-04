@@ -7,7 +7,7 @@ import me.server.domain.rooms.RoomsAggregateContext
 import me.server.domain_api.rooms_api._
 import me.server.utils.MockDocumentStore
 import me.server.utils.cqrs.{CommandResult, StatusResponse}
-import me.server.utils.ddd.{AggregateId, AggregateVersion}
+import me.server.utils.ddd.{AggregateId, AggregateVersion, OrganizationId}
 import me.server.utils.tests.TestAggregateRepositoryActor
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
@@ -31,9 +31,9 @@ class RoomSpec() extends TestKit(ActorSystem("RoomSpec")) with ImplicitSender
   "An Room actor" must {
 
     "get result with 1 aggregate and 1 version" in {
-      val commandHandler = system.actorOf(Props(new TestAggregateRepositoryActor[Room](AggregateId(-1),List.empty,roomAggContext,documentStore)))
+      val commandHandler = system.actorOf(Props(new TestAggregateRepositoryActor[Room](AggregateId(-1), OrganizationId(0), List.empty,roomAggContext,documentStore)))
 
-      commandHandler ! CreateRoom(RoomInfo("",""),2,50000)
+      commandHandler ! CreateRoom(OrganizationId(0), RoomInfo("",""),2,50000)
       expectMsg(CommandResult(StatusResponse.success, AggregateId(-1), AggregateVersion(1), ""))
     }
   }
@@ -43,11 +43,11 @@ class RoomSpec() extends TestKit(ActorSystem("RoomSpec")) with ImplicitSender
 
     "get result with 1 aggregate and next version" in {
       val listEvents: List[RoomEvent] = List(RoomCreated(RoomInfo("",""),2,50000,false), RoomInfoChanged( "", ""), RoomInfoChanged( "", ""))
-      val commandHandler = system.actorOf(Props(new TestAggregateRepositoryActor[Room](AggregateId(-1),listEvents,roomAggContext,documentStore)))
+      val commandHandler = system.actorOf(Props(new TestAggregateRepositoryActor[Room](AggregateId(-1), OrganizationId(0), listEvents,roomAggContext,documentStore)))
       var version = 5
 
 
-      commandHandler ! ChangeRoomInfo(AggregateId(-1), AggregateVersion(version), "", "")
+      commandHandler ! ChangeRoomInfo(AggregateId(-1), AggregateVersion(version), OrganizationId(0), "", "")
       expectMsg(CommandResult(StatusResponse.success, AggregateId(-1), AggregateVersion(version), ""))
     }
   }

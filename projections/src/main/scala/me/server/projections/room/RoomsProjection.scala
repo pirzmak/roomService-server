@@ -3,8 +3,9 @@ package me.server.projections.room
 import akka.actor.ActorSystem
 import me.server.domain_api.reservations_api.Reservation
 import me.server.domain_api.rooms_api.Room
-import me.server.projections_api.rooms_api.GetAllRooms
+import me.server.projections_api.rooms_api.{GetAllRooms, GetRoomById}
 import me.server.utils.cqrs.ProjectionActor
+import me.server.utils.ddd.{AggregateId, OrganizationId}
 import me.server.utils.{Aggregate, DocumentStore}
 
 import scala.concurrent.ExecutionContext
@@ -15,11 +16,16 @@ class RoomsProjection(projectionId: String, aggregateId: String, documentStore: 
   def persistenceId = projectionId
 
   override val receiveCommand: Receive = {
-    case m: GetAllRooms => sender() ! getAllRooms()
+    case m: GetAllRooms => sender() ! getAllRooms(m.organizationId)
+    case m: GetRoomById => sender() ! getRoomById(m.roomId, m.organizationId)
     case _ => ()
   }
 
-  def getAllRooms(): List[Aggregate[Room]] = {
-    documentStore.getAll.toList
+  def getAllRooms(organizationId: OrganizationId): List[Aggregate[Room]] = {
+    documentStore.getAll(organizationId).toList
+  }
+
+  def getRoomById(roomId: AggregateId, organizationId: OrganizationId): Option[Aggregate[Room]] = {
+    documentStore.getDocumentById(roomId,organizationId)
   }
 }

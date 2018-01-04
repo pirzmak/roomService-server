@@ -18,6 +18,7 @@ case class RepositoryAggregateState[AGGREGATE_ROOT](events: List[MyEvent] = Nil,
 
 abstract class AggregateRepositoryActor[AGGREGATE_ROOT](id: String,
                                                         aggregateId: AggregateId,
+                                                        organizationId: OrganizationId,
                                                         aggregateContext: AggregateContext[AGGREGATE_ROOT],
                                                         documentStore: DocumentStore[AGGREGATE_ROOT]) extends PersistentActor {
   def persistenceId = id
@@ -34,7 +35,7 @@ abstract class AggregateRepositoryActor[AGGREGATE_ROOT](id: String,
       case c: FirstCommand[_, _] =>
         handleCommand(c, commandWithSender)
       case c: Command[_, _] =>
-        if (c.expectedVersion.version != state.aggregateVersion.next.version)
+        if (c.expectedVersion.version != state.aggregateVersion.version)
           commandWithSender.sender ! CommandResult(StatusResponse.failure, c.aggregateId, c.expectedVersion,
             "Expected version: " + state.aggregateVersion.next.version + " but get: " + c.expectedVersion.version)
         else
@@ -50,7 +51,7 @@ abstract class AggregateRepositoryActor[AGGREGATE_ROOT](id: String,
         persist(MyEvent(e,aggregateId)) {
           event => {
             val aggregate = aggregateContext.receiveEvents(e, state.aggregateState)
-            documentStore.insertDocument(aggregateId,state.aggregateVersion,aggregate)
+            documentStore.upsertDocument(aggregateId,organizationId,aggregate)
             updateState(event,aggregate)
             commandWithSender.sender ! CommandResult(StatusResponse.success, aggregateId, state.aggregateVersion, "")
           }
@@ -63,7 +64,7 @@ abstract class AggregateRepositoryActor[AGGREGATE_ROOT](id: String,
   val receiveRecover: Receive = {
     case event: MyEvent => {
       val aggregate = aggregateContext.receiveEvents(event.event, state.aggregateState)
-      documentStore.insertDocument(aggregateId,state.aggregateVersion,aggregate)
+      documentStore.upsertDocument(aggregateId,organizationId,aggregate)
       updateState(event,aggregate)
     }
     case _ => ()

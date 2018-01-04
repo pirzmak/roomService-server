@@ -5,18 +5,19 @@ import java.time.format.DateTimeFormatter
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import me.server.domain_api.reservations_api._
-import me.server.domain_api.rooms_api.{Room, RoomInfo}
+import me.server.domain_api.rooms_api._
 import me.server.domain_api.users_api.{CreateUser, PersonInfo, PersonalData, UserId}
 import me.server.utils.Aggregate
 import me.server.utils.cqrs.{CommandResult, StatusResponse}
-import me.server.utils.ddd.{AggregateId, AggregateVersion}
+import me.server.utils.ddd.{AggregateId, AggregateVersion, OrganizationId}
 import me.server.projections_api.reservations_api.GetAllReservations
 import me.server.projections_api.rooms_api.GetAllRooms
 import spray.json._
 
 
-trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
+trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol { //TODO add types
   implicit val aggregateIdJsonFormat = jsonFormat1(AggregateId)
+  implicit val organizationIdJsonFormat = jsonFormat1(OrganizationId)
   implicit val versionIdJsonFormat = jsonFormat1(AggregateVersion)
 
   implicit val statusResponseJsonFormat = jsonFormat1(StatusResponse.apply)
@@ -36,29 +37,36 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 
   //User
   implicit val userIdJsonFormat = jsonFormat1(UserId.apply)
-  implicit val createUserJsonFormat = jsonFormat4(CreateUser)
+  implicit val createUserJsonFormat = jsonFormat5(CreateUser)
 
   //Reservations
   implicit val personalDataJsonFormat = jsonFormat1(PersonalData)
   implicit val personInfoJsonFormat = jsonFormat5(PersonInfo.apply)
   implicit val reservationJsonFormat = jsonFormat8(Reservation.apply)
-  implicit val aggregateReservationJsonFormat = jsonFormat3(Aggregate.apply[Reservation])
+  implicit val aggregateReservationJsonFormat = jsonFormat4(Aggregate.apply[Reservation])
 
-  implicit val getAllReservationsJsonFormat = jsonFormat0(GetAllReservations)
+  implicit val getAllReservationsJsonFormat = jsonFormat1(GetAllReservations)
 
-  implicit val createReservationJsonFormat = jsonFormat5(CreateReservation)
-  implicit val changeDateReservationJsonFormat = jsonFormat4(ChangeDate)
-  implicit val changeClientInfoReservationJsonFormat = jsonFormat7(ChangeClientInfo)
-  implicit val changeRoomReservationJsonFormat = jsonFormat3(ChangeRoom)
-  implicit val changeDiscountReservationJsonFormat = jsonFormat3(ChangeDiscount)
-  implicit val changeLoanReservationJsonFormat = jsonFormat3(ChangeLoan)
-  implicit val deleteReservationJsonFormat = jsonFormat2(DeleteReservation)
-  implicit val activeLoanReservationJsonFormat = jsonFormat2(ActiveReservation)
+  implicit val createReservationJsonFormat = jsonFormat6(CreateReservation)
+  implicit val changeDateReservationJsonFormat = jsonFormat5(ChangeDate)
+  implicit val changeClientInfoReservationJsonFormat = jsonFormat8(ChangeClientInfo)
+  implicit val changeRoomReservationJsonFormat = jsonFormat4(ChangeRoom)
+  implicit val changeDiscountReservationJsonFormat = jsonFormat4(ChangeDiscount)
+  implicit val changeLoanReservationJsonFormat = jsonFormat4(ChangeLoan)
+  implicit val deleteReservationJsonFormat = jsonFormat3(DeleteReservation)
+  implicit val activeLoanReservationJsonFormat = jsonFormat3(ActiveReservation)
 
   //Rooms
   implicit val roomInfoJsonFormat = jsonFormat2(RoomInfo)
   implicit val roomJsonFormat = jsonFormat4(Room.apply)
-  implicit val aggregateRoomJsonFormat = jsonFormat3(Aggregate.apply[Room])
+  implicit val aggregateRoomJsonFormat = jsonFormat4(Aggregate.apply[Room])
 
-  implicit val getAllRoomsJsonFormat = jsonFormat0(GetAllRooms)
+  implicit val getAllRoomsJsonFormat = jsonFormat1(GetAllRooms)
+
+  implicit val createRoomJsonFormat = jsonFormat4(CreateRoom)
+  implicit val changeRoomInfoJsonFormat = jsonFormat5(ChangeRoomInfo)
+  implicit val changeBedsNrJsonFormat = jsonFormat4(ChangeBedsNr)
+  implicit val changeRoomCostJsonFormat = jsonFormat4(ChangeRoomCost)
+  implicit val deleteRoomJsonFormat = jsonFormat3(DeleteRoom)
+  implicit val activeRoomJsonFormat = jsonFormat3(ActiveRoom)
 }

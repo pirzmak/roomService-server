@@ -6,7 +6,7 @@ import me.server.utils.ddd.AggregateContext
 
 class RoomsAggregateContext() extends AggregateContext[Room] {
 
-  def receiveCommand(command: MyCommand, reservation: Room): CommandResponse = command match {
+  def receiveCommand(command: MyCommand, room: Room): CommandResponse = command match {
     case c: CreateRoom => RoomsCommandHandler.handleCreateRoom(c)
     case c: ChangeRoomInfo => RoomsCommandHandler.handleChangeRoomInfo(c)
     case c: ChangeBedsNr => RoomsCommandHandler.handleChangeBedsNr(c)
@@ -16,13 +16,13 @@ class RoomsAggregateContext() extends AggregateContext[Room] {
 
     case _ => throw CommandException.unknownCommand
   }
-  def receiveEvents(event: Event, reservation: Room): Room = event match {
+  def receiveEvents(event: Event, room: Room): Room = event match {
     case e: RoomCreated => RoomsEventHandler.handleRoomCreated(e)
-    case e: RoomInfoChanged => RoomsEventHandler.handleRoomInfoChanged(e, reservation)
-    case e: BedsNrChanged => RoomsEventHandler.handleBedsNrChanged(e, reservation)
-    case e: RoomCostChanged => RoomsEventHandler.handleRoomCostChanged(e, reservation)
-    case e: RoomDeleted => RoomsEventHandler.handleRoomDeleted(e, reservation)
-    case e: RoomActived => RoomsEventHandler.handleRoomActived(e, reservation)
+    case e: RoomInfoChanged => RoomsEventHandler.handleRoomInfoChanged(e, room)
+    case e: BedsNrChanged => RoomsEventHandler.handleBedsNrChanged(e, room)
+    case e: RoomCostChanged => RoomsEventHandler.handleRoomCostChanged(e, room)
+    case e: RoomDeleted => RoomsEventHandler.handleRoomDeleted(e, room)
+    case e: RoomActived => RoomsEventHandler.handleRoomActived(e, room)
 
     case _ => throw CommandException.unknownEvent
   }

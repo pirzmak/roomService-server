@@ -6,9 +6,9 @@ import akka.persistence.query.{EventEnvelope, Offset, PersistenceQuery}
 import akka.persistence.query.scaladsl._
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
-import me.server.utils.ddd.AggregateId
+import me.server.utils.ddd.{AggregateId, OrganizationId}
 
-class EventsListener[TYPE](eventListening: (TYPE, AggregateId) => Unit)(implicit system: ActorSystem) {
+class EventsListener[TYPE](eventListening: (TYPE, AggregateId, OrganizationId) => Unit)(implicit system: ActorSystem) {
 
   private lazy val readJournal = PersistenceQuery(system).readJournalFor("inmemory-read-journal")
     .asInstanceOf[ReadJournal
@@ -25,7 +25,7 @@ class EventsListener[TYPE](eventListening: (TYPE, AggregateId) => Unit)(implicit
 
   source.runForeach { event => event.event match {
     case e: MyEvent => e.event match {
-      case ev: TYPE => eventListening(ev,e.aggregateId)
+      case ev: TYPE => eventListening(ev,e.aggregateId,e.organizationId)
       case _ => ()
     }
     case _ => throw new Exception("Dupa")

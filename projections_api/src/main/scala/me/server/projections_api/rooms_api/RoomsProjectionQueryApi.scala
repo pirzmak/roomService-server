@@ -14,4 +14,8 @@ class RoomsProjectionQueryApi(projection: ActorRef)(implicit akkaTimeout: Timeou
     (projection ? query).mapTo[List[Aggregate[Room]]]
   }
 
+  def getRoomById(query: GetRoomById): Future[Option[Aggregate[Room]]] = {
+    (projection ? query).mapTo[Option[Aggregate[Room]]]
+  }
+
 }
