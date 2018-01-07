@@ -16,7 +16,7 @@ class TestAggregateRepositoryActor[AGGREGATE_ROOT](aggregateId: AggregateId,
     events.foreach(event => {
       val aggregate = aggregateContext.receiveEvents(event, state.aggregateState)
       documentStore.insertDocument(aggregateId, state.aggregateVersion, organizationId, aggregate)
-      updateState(MyEvent(event, aggregateId), aggregate)
+      updateState(MyEvent(event, aggregateId, organizationId), aggregate)
     })
   }
 

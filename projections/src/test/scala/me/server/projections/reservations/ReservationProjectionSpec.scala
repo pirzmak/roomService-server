@@ -62,14 +62,17 @@ class ReservationProjectionSpec extends TestKit(ActorSystem("ReservaationsProjec
     val dateTo1 = LocalDate.of(2017,6,15)
     val dateFrom2 = LocalDate.of(2017,7,10)
     val dateTo2 = LocalDate.of(2017,7,18)
-    documentStore.insertDocument(AggregateId(0),AggregateVersion(1),OrganizationId(0),Reservation(dateFrom1,dateTo1,PersonInfo.empty,AggregateId(0),0,None,None,false))
-    documentStore.insertDocument(AggregateId(0),AggregateVersion(1),OrganizationId(0),Reservation(dateFrom2,dateTo2,PersonInfo.empty,AggregateId(0),0,None,None,false))
+    documentStore.insertDocument(AggregateId(0),AggregateVersion(1),OrganizationId(0),
+      Reservation(LocalDate.MIN,dateFrom1,dateTo1,None,None,PersonInfo.empty,AggregateId(0),Money.empty,None,None,false))
+    documentStore.insertDocument(AggregateId(0),AggregateVersion(1),OrganizationId(0),
+      Reservation(LocalDate.MIN,dateFrom2,dateTo2,None,None,PersonInfo.empty,AggregateId(0),Money.empty,None,None,false))
 
     "get result from 2017.06.01 to 2017.06.12" in {
       val commandHandler = system.actorOf(Props(new ReservationProjection("Test","TestP",documentStore)))
 
       commandHandler ! GetReservationsFromTo(LocalDate.of(2017,6,1),LocalDate.of(2017,6,12),OrganizationId(0))
-      expectMsg(List(Aggregate(AggregateId(0),AggregateVersion(1),OrganizationId(0),Reservation(dateFrom1,dateTo1,PersonInfo.empty,AggregateId(0),0,None,None,false))))
+      expectMsg(List(Aggregate(AggregateId(0),AggregateVersion(1),OrganizationId(0),
+        Reservation(LocalDate.MIN,dateFrom1,dateTo1,None,None,PersonInfo.empty,AggregateId(0),Money.empty,None,None,false))))
     }
 
     "get result from 2017.06.01 to 2017.06.03" in {
@@ -83,8 +86,11 @@ class ReservationProjectionSpec extends TestKit(ActorSystem("ReservaationsProjec
       val commandHandler = system.actorOf(Props(new ReservationProjection("Test","TestP",documentStore)))
 
       commandHandler ! GetReservationsFromTo(LocalDate.of(2017,6,1),LocalDate.of(2017,6,3),OrganizationId(0))
-      expectMsg(List(Aggregate(AggregateId(0),AggregateVersion(1),OrganizationId(0),Reservation(dateFrom1,dateTo1,PersonInfo.empty,AggregateId(0),0,None,None,false)),
-        Aggregate(AggregateId(0),AggregateVersion(1),OrganizationId(0),Reservation(dateFrom2,dateTo2,PersonInfo.empty,AggregateId(0),0,None,None,false))))
+      expectMsg(List(
+        (AggregateId(0),AggregateVersion(1),OrganizationId(0),
+          Reservation(LocalDate.MIN,dateFrom1,dateTo1,None,None,PersonInfo.empty,AggregateId(0),Money.empty,None,None,false)),
+        Aggregate(AggregateId(0),AggregateVersion(1),OrganizationId(0),
+          Reservation(LocalDate.MIN,dateFrom2,dateTo2,None,None,PersonInfo.empty,AggregateId(0),Money.empty,None,None,false))))
     }
   }
 

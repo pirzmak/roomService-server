@@ -10,4 +10,15 @@ case class CreateUser(organizationId: OrganizationId,
 case class UpdateUser(aggregateId: AggregateId, expectedVersion: AggregateVersion, organizationId: OrganizationId,
                       email: Option[String], password: Option[String], firstName: Option[String], lastName: Option[String]) extends Command[User, CommandResult]
 
+case class SetUserData(aggregateId: AggregateId, expectedVersion: AggregateVersion, organizationId: OrganizationId,
+                       sex: Option[String], address: Option[String], age: Option[Int], id: Option[String], phone: Option[String]) extends Command[User, CommandResult]
+
+
+case class ChangeUserType(aggregateId: AggregateId, expectedVersion: AggregateVersion, organizationId: OrganizationId,
+                          userType: UserType) extends Command[User, CommandResult]
+
+case class ActiveUser(aggregateId: AggregateId, expectedVersion: AggregateVersion, organizationId: OrganizationId) extends Command[User, CommandResult]
+
+case class ConfirmUserEmail(aggregateId: AggregateId, expectedVersion: AggregateVersion, organizationId: OrganizationId) extends Command[User, CommandResult]
+
 case class DeleteUser(aggregateId: AggregateId, expectedVersion: AggregateVersion, organizationId: OrganizationId) extends Command[User, CommandResult]

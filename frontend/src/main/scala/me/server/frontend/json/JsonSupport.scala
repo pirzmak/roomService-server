@@ -38,11 +38,13 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol { //TODO add
   //User
   implicit val userIdJsonFormat = jsonFormat1(UserId.apply)
   implicit val createUserJsonFormat = jsonFormat5(CreateUser)
+  implicit val personalDataJsonFormat = jsonFormat4(PersonalData.apply)
+  implicit val personInfoJsonFormat = jsonFormat5(PersonInfo.apply)
 
   //Reservations
-  implicit val personalDataJsonFormat = jsonFormat1(PersonalData)
-  implicit val personInfoJsonFormat = jsonFormat5(PersonInfo.apply)
-  implicit val reservationJsonFormat = jsonFormat8(Reservation.apply)
+  implicit val moneyJsonFormat = jsonFormat2(Money.apply)
+  implicit val loanJsonFormat = jsonFormat2(Loan.apply)
+  implicit val reservationJsonFormat = jsonFormat11(Reservation.apply)
   implicit val aggregateReservationJsonFormat = jsonFormat4(Aggregate.apply[Reservation])
 
   implicit val getAllReservationsJsonFormat = jsonFormat1(GetAllReservations)

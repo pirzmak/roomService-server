@@ -8,4 +8,12 @@ case class UserCreated(id: UserId, email: String, password: String, firstName:St
 
 case class UserUpdated(email: Option[String], password: Option[String], firstName: Option[String], lastName: Option[String]) extends UserEvent
 
+case class UserDataSet(sex: Option[String], address: Option[String], age: Option[Int], id: Option[String], phone: Option[String]) extends UserEvent
+
+case class UserTypeChanged(userType: UserType) extends UserEvent
+
+case class UserActived() extends UserEvent
+
+case class UserEmailConfirmed() extends UserEvent
+
 case class UserDeleted() extends UserEvent

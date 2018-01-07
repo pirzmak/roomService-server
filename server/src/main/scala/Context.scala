@@ -5,7 +5,7 @@ import akka.dispatch.ExecutionContexts.global
 import akka.util.Timeout
 import me.server.domain.reservations.ReservationsAggregateContext
 import me.server.domain.rooms.RoomsAggregateContext
-import me.server.domain_api.reservations_api.{CreateReservation, Reservation}
+import me.server.domain_api.reservations_api.{CreateReservation, Money, Reservation}
 import me.server.domain_api.rooms_api.{CreateRoom, Room, RoomInfo}
 import me.server.domain_api.users_api.PersonInfo
 import me.server.frontend.{FrontendServer, MainRestService}
@@ -32,7 +32,8 @@ class Context {
     //stores
     val reservationsDocumentStore = new MockDocumentStore[Reservation]
     reservationsDocumentStore.insertDocument(AggregateId(-2),AggregateVersion(1),OrganizationId(0),
-      Reservation(LocalDate.now(),LocalDate.now().plusWeeks(1),PersonInfo("Jon","Doe","","",None),AggregateId(2),10,None,None,false))
+      Reservation(LocalDate.now(), LocalDate.now(),LocalDate.now().plusWeeks(1), None, None,
+        PersonInfo("Jon","Doe","","",None),AggregateId(2),Money(10,"PLN"),None,None,false))
 
     val roomsDocumentStore = new MockDocumentStore[Room]
 
@@ -60,6 +61,7 @@ class Context {
     roomsCommandHandler ! CreateRoom(OrganizationId(0), RoomInfo("",""),2,20)
     roomsCommandHandler ! CreateRoom(OrganizationId(0), RoomInfo("",""),2,20)
     roomsCommandHandler ! CreateRoom(OrganizationId(0), RoomInfo("",""),2,20)
+
     //services
     val reservationsServiceRoute = new ReservationsServiceRoute(reservationCommandHandler, reservationProjectionQueryApi)
     val roomsServiceRoute = new RoomsServiceRoute(roomsCommandHandler, roomsProjectionQueryApi)
