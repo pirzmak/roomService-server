@@ -31,9 +31,12 @@ class Context {
 
     //stores
     val reservationsDocumentStore = new MockDocumentStore[Reservation]
-    reservationsDocumentStore.insertDocument(AggregateId(-2),AggregateVersion(1),OrganizationId(0),
+    reservationsDocumentStore.insertDocument(AggregateId(2),AggregateVersion(1),OrganizationId(0),
       Reservation(LocalDate.now(), LocalDate.now(),LocalDate.now().plusWeeks(1), None, None,
         PersonInfo("Jon","Doe","","",None),AggregateId(2),Money(10,"PLN"),None,None,false))
+    reservationsDocumentStore.insertDocument(AggregateId(3),AggregateVersion(1),OrganizationId(0),
+      Reservation(LocalDate.now(), LocalDate.now(),LocalDate.now().plusDays(5), None, None,
+        PersonInfo("Adam","Małysz","","",None),AggregateId(1),Money(10,"PLN"),None,None,false))
 
     val roomsDocumentStore = new MockDocumentStore[Room]
 
@@ -58,9 +61,11 @@ class Context {
     val roomsCommandHandler = system.actorOf(Props(new AggregateManager[Room]("RoomManager",roomsContextActor, roomsDocumentStore)),"RoomManagerActor")
 
     roomsCommandHandler ! CreateRoom(OrganizationId(0), RoomInfo("Nowy",""),2,20)
-    roomsCommandHandler ! CreateRoom(OrganizationId(0), RoomInfo("",""),2,20)
-    roomsCommandHandler ! CreateRoom(OrganizationId(0), RoomInfo("",""),2,20)
-    roomsCommandHandler ! CreateRoom(OrganizationId(0), RoomInfo("",""),2,20)
+    roomsCommandHandler ! CreateRoom(OrganizationId(0), RoomInfo("1",""),2,20)
+    roomsCommandHandler ! CreateRoom(OrganizationId(0), RoomInfo("2",""),2,20)
+    roomsCommandHandler ! CreateRoom(OrganizationId(0), RoomInfo("3",""),2,20)
+    roomsCommandHandler ! CreateRoom(OrganizationId(0), RoomInfo("4",""),2,20)
+    roomsCommandHandler ! CreateRoom(OrganizationId(0), RoomInfo("5",""),2,20)
 
     //services
     val reservationsServiceRoute = new ReservationsServiceRoute(reservationCommandHandler, reservationProjectionQueryApi)

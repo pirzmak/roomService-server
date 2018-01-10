@@ -8,8 +8,8 @@ import akka.pattern.ask
 import me.server.domain_api.reservations_api._
 import me.server.frontend.json.JsonSupport
 import me.server.utils.cqrs.CommandResult
-import me.server.projections_api.reservations_api.{GetAllReservations, ReservationProjectionQueryApi}
-import me.server.utils.ddd.OrganizationId
+import me.server.projections_api.reservations_api.{GetAllReservations, GetReservationById, ReservationProjectionQueryApi}
+import me.server.utils.ddd.{AggregateId, OrganizationId}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -26,6 +26,11 @@ class ReservationsServiceRoute(val reservationsRepository: ActorRef,
         complete(reservationsProjectionQueryApi.getAllReservations(GetAllReservations(OrganizationId(0))))
       }
     } ~
+      path("get-by-id"/Segment) { id =>
+        get {
+          complete(reservationsProjectionQueryApi.getReservationById(GetReservationById(AggregateId(id.toLong),OrganizationId(0))))
+        }
+      } ~
       path("create") {
         post {
           entity(as[CreateReservation]) { message =>
