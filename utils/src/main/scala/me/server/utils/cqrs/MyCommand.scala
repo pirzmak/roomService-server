@@ -1,7 +1,9 @@
 package me.server.utils.cqrs
 
 import akka.actor.ActorRef
-import me.server.utils.ddd.{AggregateId, AggregateVersion}
+import me.server.utils.ddd.{AggregateId, AggregateVersion, OrganizationId}
+
+case class CommandResult(status: StatusResponse, id: AggregateId, version: AggregateVersion, message: String)
 
 case class StatusResponse(name: String)
 
@@ -17,10 +19,13 @@ object StatusResponse {
 
 trait MyCommand
 
-abstract class FirstCommand[AGGREGATE, COMMAND_RESULT] extends MyCommand
+abstract class FirstCommand[AGGREGATE, COMMAND_RESULT] extends MyCommand {
+  val organizationId: OrganizationId
+}
 
 abstract class Command[AGGREGATE, COMMAND_RESULT] extends MyCommand {
   val aggregateId: AggregateId
+  val organizationId: OrganizationId
   val expectedVersion: AggregateVersion
 }
 
@@ -37,7 +42,7 @@ case class CommandFailure(msg: String) extends CommandResponse
 
 
 
-case class CommandResult(status: StatusResponse, id: AggregateId, version: AggregateVersion, message: String)
+//case class CommandResult(status: StatusResponse, id: AggregateId, version: AggregateVersion, message: String)
 
 case class CommandException(msg: String) extends Exception(msg)
 

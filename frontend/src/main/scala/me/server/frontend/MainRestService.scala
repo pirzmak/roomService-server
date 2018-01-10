@@ -13,11 +13,10 @@ class MainRestService(reservationsServiceRoute: ReservationsServiceRoute,
         pathPrefix("reservations") {
           reservationsServiceRoute.routes
         }
-      }
-    } ~
-      pathPrefix("rooms") {
-        corsHandler {
+      }~corsHandler {
+        pathPrefix("rooms") {
           roomsServiceRoute.routes
         }
       }
+    }
 }

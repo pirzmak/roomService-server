@@ -18,8 +18,8 @@ class ReservationProjectionQueryApi(projection: ActorRef)(implicit akkaTimeout: 
     (projection ? query).mapTo[List[Reservation]]
   }
 
-  def getReservationById(query: GetReservationById): Future[Option[Reservation]] = {
-    (projection ? query).mapTo[Option[Reservation]]
+  def getReservationById(query: GetReservationById): Future[Option[Aggregate[Reservation]]] = {
+    (projection ? query).mapTo[Option[Aggregate[Reservation]]]
   }
 
 }

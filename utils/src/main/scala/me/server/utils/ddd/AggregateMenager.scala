@@ -33,7 +33,7 @@ class AggregateManager[AGGREGATE](actorId: String,
       persist(NewAggregateAdded(newAggregateId)) {
         event: NewAggregateAdded =>
           updateState(event.id)
-        this.handleFirstCommand(c,sender(),event.id)
+        this.handleFirstCommand(c,sender(),event.id, c.organizationId)
       }
     case c: Command[_,_] =>
       aggregatesActors.get(c.aggregateId.asLong) match {
@@ -43,24 +43,24 @@ class AggregateManager[AGGREGATE](actorId: String,
     case _ => throw CommandException.unknownCommand
   }
 
-  private def handleFirstCommand(command: FirstCommand[_,_], sender: ActorRef, newId: AggregateId): Unit = {
+  private def handleFirstCommand(command: FirstCommand[_,_], sender: ActorRef, newId: AggregateId, organizationId: OrganizationId): Unit = {
 
-    val firstActor = createAggregateActorsIfNeeded(newId)
+    val firstActor = createAggregateActorsIfNeeded(newId, organizationId)
 
     firstActor ! CommandWithSender(sender,command)
   }
 
-  private def createAggregateActorsIfNeeded(aggregateId: AggregateId): ActorRef = {
+  private def createAggregateActorsIfNeeded(aggregateId: AggregateId, organizationId: OrganizationId): ActorRef = {
     aggregatesActors.getOrElse(aggregateId.asLong, {
-      aggregatesActors.update(aggregateId.asLong, createAggregateActors(aggregateId))
+      aggregatesActors.update(aggregateId.asLong, createAggregateActors(aggregateId, organizationId))
       aggregatesActors(aggregateId.asLong)
     })
   }
 
-  private def createAggregateActors(aggregateId: AggregateId) : ActorRef = {
+  private def createAggregateActors(aggregateId: AggregateId, organizationId: OrganizationId) : ActorRef = {
     context.child(aggregateTypeName + "_AggregateRepository_" + aggregateId.asLong).getOrElse(
       context.actorOf(Props(new AggregateRepositoryActor[AGGREGATE](aggregateTypeName + "_AggregateRepository_" + aggregateId.asLong,
-        aggregateId, aggregateContext, documentStore) {}),aggregateTypeName + "_AggregateRepository_" + aggregateId.asLong)
+        aggregateId, organizationId, aggregateContext, documentStore) {}),aggregateTypeName + "_AggregateRepository_" + aggregateId.asLong)
     )
   }
 

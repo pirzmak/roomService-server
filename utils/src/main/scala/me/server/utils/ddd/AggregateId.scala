@@ -4,6 +4,10 @@ case class AggregateId(id: Long) {
   def asLong: Long = id
 }
 
+case class OrganizationId(id: Long) {
+  def asLong: Long = id
+}
+
 case class AggregateVersion(version: Long){
   def next: AggregateVersion = AggregateVersion(this.version + 1)
 }

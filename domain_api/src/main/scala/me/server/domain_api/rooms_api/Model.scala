@@ -1,9 +1,11 @@
 package me.server.domain_api.rooms_api
 
-case class Room(info: RoomInfo, bedsNr: Int, costPerPerson: Long, deleted: Boolean)
+import me.server.domain_api.reservations_api.Money
+
+case class Room(info: RoomInfo, bedsNr: Int, costPerPerson: Money, deleted: Boolean)
 
 case class RoomInfo(name: String, description: String)
 
 object Room {
-  val empty = Room(RoomInfo("", ""), 0, 0, false)
+  val empty = Room(RoomInfo("", ""), 0, Money.empty, false)
 }

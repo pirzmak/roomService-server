@@ -2,20 +2,21 @@ package me.server.utils.tests
 
 import me.server.utils.DocumentStore
 import me.server.utils.cqrs._
-import me.server.utils.ddd.{AggregateContext, AggregateId, AggregateRepositoryActor}
+import me.server.utils.ddd.{AggregateContext, AggregateId, AggregateRepositoryActor, OrganizationId}
 
 class TestAggregateRepositoryActor[AGGREGATE_ROOT](aggregateId: AggregateId,
+                                                   organizationId: OrganizationId,
                                                    events: List[Event],
                                                    aggregateContext: AggregateContext[AGGREGATE_ROOT],
-                                                   documentStore: DocumentStore[AGGREGATE_ROOT]) extends AggregateRepositoryActor("TestMock", aggregateId, aggregateContext, documentStore) {
+                                                   documentStore: DocumentStore[AGGREGATE_ROOT]) extends AggregateRepositoryActor("TestMock", aggregateId, organizationId, aggregateContext, documentStore) {
 
 
   override def preStart(): Unit = {
     super.preStart()
     events.foreach(event => {
       val aggregate = aggregateContext.receiveEvents(event, state.aggregateState)
-      documentStore.insertDocument(aggregateId, state.aggregateVersion, aggregate)
-      updateState(MyEvent(event, aggregateId), aggregate)
+      documentStore.insertDocument(aggregateId, state.aggregateVersion, organizationId, aggregate)
+      updateState(MyEvent(event, aggregateId, organizationId), aggregate)
     })
   }
 
