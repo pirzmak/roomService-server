@@ -29,20 +29,24 @@ object Dependencies {
   // akka 2.5.x
   val AkkainMemeor = "com.github.dnvriend" %% "akka-persistence-inmemory" % "2.5.1.1"
 
+  // leveldb
+  val leveldb = "org.iq80.leveldb"            % "leveldb"          % "0.9"
+  val leveldbjni = "org.fusesource.leveldbjni"   % "leveldbjni-all"   % "1.8"
+
   // Projects
   val domainDeps =
-    Seq(akkaActor, akkaPersistance, akkaTestkit, scalaTest, AkkainMemeor)
+    Seq(akkaActor, akkaPersistance, akkaTestkit, scalaTest, AkkainMemeor, leveldb)
 
   val frontendDeps =
     Seq(akkaActor, akkaPersistance, akkaStream, akkaHTTP, akkaHTTPSprayJson, akkaHTTPTestKid, akkaTestkit,
-      sprayJson, scalaTest, AkkainMemeor)
+      sprayJson, scalaTest, AkkainMemeor, leveldb)
 
   val projectionsDeps =
-    Seq(scalaTest, akkaActor, akkaPersistance, akkaStream, akkaPersistanceQuery, akkaTestkit, AkkainMemeor)
+    Seq(scalaTest, akkaActor, akkaPersistance, akkaStream, akkaPersistanceQuery, akkaTestkit, AkkainMemeor, leveldb)
 
   val serverDeps =
-    Seq(akkaActor, akkaTestkit, scalaTest, AkkainMemeor)
+    Seq(akkaActor, akkaTestkit, scalaTest, AkkainMemeor, leveldb)
 
   val utilsDeps =
-    Seq(scalaTest, akkaHTTP, akkaHTTPSprayJson, akkaHTTPTestKid, AkkainMemeor)
+    Seq(scalaTest, akkaHTTP, akkaHTTPSprayJson, akkaHTTPTestKid, AkkainMemeor, leveldb)
 }

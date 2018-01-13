@@ -4,7 +4,7 @@ import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
 import me.server.domain_api.reservations_api.Reservation
-import me.server.utils.Aggregate
+import me.server.utils.ddd.Aggregate
 
 import scala.concurrent.Future
 

@@ -5,9 +5,9 @@ import akka.dispatch.ExecutionContexts.global
 import akka.util.Timeout
 import me.server.domain.rooms.RoomsAggregateContext
 import me.server.domain_api.rooms_api._
-import me.server.utils.MockDocumentStore
 import me.server.utils.cqrs.{CommandResult, StatusResponse}
 import me.server.utils.ddd.{AggregateId, AggregateVersion, OrganizationId}
+import me.server.utils.documentStore.MockDocumentStore
 import me.server.utils.tests.TestAggregateRepositoryActor
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
@@ -44,11 +44,13 @@ class RoomSpec() extends TestKit(ActorSystem("RoomSpec")) with ImplicitSender
     "get result with 1 aggregate and next version" in {
       val listEvents: List[RoomEvent] = List(RoomCreated(RoomInfo("",""),2,50000,false), RoomInfoChanged( "", ""), RoomInfoChanged( "", ""))
       val commandHandler = system.actorOf(Props(new TestAggregateRepositoryActor[Room](AggregateId(-1), OrganizationId(0), listEvents,roomAggContext,documentStore)))
-      var version = 5
+      var version = 3
 
 
       commandHandler ! ChangeRoomInfo(AggregateId(-1), AggregateVersion(version), OrganizationId(0), "", "")
-      expectMsg(CommandResult(StatusResponse.success, AggregateId(-1), AggregateVersion(version), ""))
+      expectMsg(CommandResult(StatusResponse.success, AggregateId(-1), AggregateVersion(version+1), ""))
+      commandHandler ! ChangeRoomInfo(AggregateId(-1), AggregateVersion(version+1), OrganizationId(0), "", "")
+      expectMsg(CommandResult(StatusResponse.success, AggregateId(-1), AggregateVersion(version+2), ""))
     }
   }
 }

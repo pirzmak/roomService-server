@@ -1,6 +1,6 @@
-package me.server.utils
+package me.server.utils.documentStore
 
-import me.server.utils.ddd.{AggregateId, AggregateVersion, OrganizationId}
+import me.server.utils.ddd.{Aggregate, AggregateId, AggregateVersion, OrganizationId}
 
 abstract class DocumentStore[T] {
   def insertDocument(aggregateId: AggregateId, aggregateVersion: AggregateVersion, organizationId: OrganizationId, aggregate: T)
@@ -30,4 +30,4 @@ class MockDocumentStore[T] extends DocumentStore[T]{
 
 }
 
-case class Aggregate[T] (aggregateId: AggregateId, version: AggregateVersion, organizationId: OrganizationId, aggregate: T)
+

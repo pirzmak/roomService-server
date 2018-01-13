@@ -7,7 +7,7 @@ import me.server.domain_api.reservations_api.{DateChanged, ReservationCreated, R
 import me.server.projections_api.rooms_occupancy_api._
 import me.server.utils.cqrs.{EventsListener, MyEvent, ProjectionActor}
 import me.server.utils.ddd.{AggregateId, AggregateVersion, OrganizationId}
-import me.server.utils.DocumentStore
+import me.server.utils.documentStore.DocumentStore
 
 import scala.concurrent.ExecutionContext
 

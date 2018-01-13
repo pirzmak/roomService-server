@@ -1,13 +1,12 @@
 import akka.actor.{ActorSystem, Props}
-import akka.pattern.ask
 import akka.util.Timeout
 import akka.dispatch.ExecutionContexts.global
 import akka.testkit.{ImplicitSender, TestKit}
 import me.server.domain.users.UsersAggregateContext
-import me.server.domain_api.users_api.{CreateUser, DeleteUser, UpdateUser, User}
-import me.server.utils.{DocumentStore, MockDocumentStore}
-import me.server.utils.ddd.{AggregateId, AggregateManager, AggregateVersion, OrganizationId}
+import me.server.domain_api.users_api.{CreateUser, UpdateUser, User}
+import me.server.utils.ddd.{AggregateId, AggregateVersion, OrganizationId}
 import me.server.utils.cqrs.{CommandResult, StatusResponse}
+import me.server.utils.documentStore.MockDocumentStore
 import me.server.utils.tests.TestAggregateRepositoryActor
 
 import scala.concurrent.duration._
@@ -49,8 +48,11 @@ class UsersSpec() extends TestKit(ActorSystem("UsersSpec")) with ImplicitSender 
       val commandHandler = system.actorOf(Props(new TestAggregateRepositoryActor[User](AggregateId(-1),OrganizationId(0),List.empty,userAggContext,documentStore)))
 
       commandHandler ! CreateUser(OrganizationId(0), "mail","pas", "adam", "haslo")
+      expectMsg(CommandResult(StatusResponse.success, AggregateId(-1), AggregateVersion(1), ""))
       commandHandler ! UpdateUser(AggregateId(-1), AggregateVersion(1), OrganizationId(0), None ,None , None, Some("a"))
       expectMsg(CommandResult(StatusResponse.success, AggregateId(-1), AggregateVersion(2), ""))
+      commandHandler ! UpdateUser(AggregateId(-1), AggregateVersion(2), OrganizationId(0), None ,None , None, Some("a"))
+      expectMsg(CommandResult(StatusResponse.success, AggregateId(-1), AggregateVersion(3), ""))
     }
   }
 }
