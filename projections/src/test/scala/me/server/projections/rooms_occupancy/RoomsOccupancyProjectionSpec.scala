@@ -7,8 +7,8 @@ import akka.dispatch.ExecutionContexts.global
 import akka.testkit.{ImplicitSender, TestKit}
 import akka.util.Timeout
 import me.server.projections_api.rooms_occupancy_api._
-import me.server.utils.MockDocumentStore
 import me.server.utils.ddd.{AggregateId, AggregateVersion, OrganizationId}
+import me.server.utils.documentStore.MockDocumentStore
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.duration._

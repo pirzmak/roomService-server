@@ -5,9 +5,9 @@ import java.time.LocalDate
 import akka.actor.ActorSystem
 import me.server.domain_api.reservations_api.Reservation
 import me.server.projections_api.reservations_api.{GetAllReservations, GetReservationById, GetReservationsFromTo}
-import me.server.utils.{Aggregate, DocumentStore}
 import me.server.utils.cqrs.ProjectionActor
-import me.server.utils.ddd.{AggregateId, OrganizationId}
+import me.server.utils.ddd.{Aggregate, AggregateId, OrganizationId}
+import me.server.utils.documentStore.DocumentStore
 
 import scala.concurrent.ExecutionContext
 

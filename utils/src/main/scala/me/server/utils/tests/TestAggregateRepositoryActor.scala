@@ -1,8 +1,8 @@
 package me.server.utils.tests
 
-import me.server.utils.DocumentStore
 import me.server.utils.cqrs._
 import me.server.utils.ddd.{AggregateContext, AggregateId, AggregateRepositoryActor, OrganizationId}
+import me.server.utils.documentStore.DocumentStore
 
 class TestAggregateRepositoryActor[AGGREGATE_ROOT](aggregateId: AggregateId,
                                                    organizationId: OrganizationId,
@@ -24,9 +24,9 @@ class TestAggregateRepositoryActor[AGGREGATE_ROOT](aggregateId: AggregateId,
     case c: FirstCommand[_, _] =>
       handleCommand(c, CommandWithSender(sender, c))
     case c: Command[_, _] =>
-      if (c.expectedVersion.version != state.aggregateVersion.next.version)
+      if (c.expectedVersion.version != state.aggregateVersion.version)
         sender ! CommandResult(StatusResponse.failure, c.aggregateId, c.expectedVersion,
-          "Expected version: " + state.aggregateVersion.next.version + " but get: " + c.expectedVersion)
+          "Expected version: " + state.aggregateVersion.version + " but get: " + c.expectedVersion)
       else
         handleCommand(c, CommandWithSender(sender, c))
     case _ => throw CommandException.unknownCommand

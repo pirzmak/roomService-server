@@ -7,9 +7,8 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import me.server.domain_api.reservations_api._
 import me.server.domain_api.rooms_api._
 import me.server.domain_api.users_api.{CreateUser, PersonInfo, PersonalData, UserId}
-import me.server.utils.Aggregate
 import me.server.utils.cqrs.{CommandResult, StatusResponse}
-import me.server.utils.ddd.{AggregateId, AggregateVersion, OrganizationId}
+import me.server.utils.ddd.{Aggregate, AggregateId, AggregateVersion, OrganizationId}
 import me.server.projections_api.reservations_api.GetAllReservations
 import me.server.projections_api.rooms_api.GetAllRooms
 import spray.json._

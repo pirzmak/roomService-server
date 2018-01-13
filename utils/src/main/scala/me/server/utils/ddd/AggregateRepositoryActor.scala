@@ -1,8 +1,8 @@
 package me.server.utils.ddd
 
 import akka.persistence.PersistentActor
-import me.server.utils.DocumentStore
 import me.server.utils.cqrs._
+import me.server.utils.documentStore.DocumentStore
 
 case class RepositoryAggregateState[AGGREGATE_ROOT](events: List[MyEvent] = Nil,
                                                     aggregateVersion: AggregateVersion = AggregateVersion(0),
@@ -37,7 +37,7 @@ abstract class AggregateRepositoryActor[AGGREGATE_ROOT](id: String,
       case c: Command[_, _] =>
         if (c.expectedVersion.version != state.aggregateVersion.version)
           commandWithSender.sender ! CommandResult(StatusResponse.failure, c.aggregateId, c.expectedVersion,
-            "Expected version: " + state.aggregateVersion.next.version + " but get: " + c.expectedVersion.version)
+            "Expected version: " + state.aggregateVersion.version + " but get: " + c.expectedVersion.version)
         else
           handleCommand(c, commandWithSender)
       case _ => throw CommandException.unknownCommand

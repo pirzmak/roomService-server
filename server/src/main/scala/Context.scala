@@ -13,11 +13,11 @@ import me.server.frontend.http.rest.{ReservationsServiceRoute, RoomsServiceRoute
 import me.server.projections.reservations.ReservationProjection
 import me.server.projections.room.RoomsProjection
 import me.server.projections.rooms_occupancy.RoomsOccupancyProjection
-import me.server.utils.MockDocumentStore
 import me.server.utils.ddd.{AggregateId, AggregateManager, AggregateVersion, OrganizationId}
 import me.server.projections_api.reservations_api.ReservationProjectionQueryApi
 import me.server.projections_api.rooms_api.RoomsProjectionQueryApi
 import me.server.projections_api.rooms_occupancy_api.{RoomsOccupancy, RoomsOccupancyQueryApi}
+import me.server.utils.documentStore.MockDocumentStore
 
 import scala.concurrent.duration._
 

@@ -1,12 +1,11 @@
 package me.server.projections.room
 
 import akka.actor.ActorSystem
-import me.server.domain_api.reservations_api.Reservation
 import me.server.domain_api.rooms_api.Room
 import me.server.projections_api.rooms_api.{GetAllRooms, GetRoomById}
 import me.server.utils.cqrs.ProjectionActor
-import me.server.utils.ddd.{AggregateId, OrganizationId}
-import me.server.utils.{Aggregate, DocumentStore}
+import me.server.utils.ddd.{Aggregate, AggregateId, OrganizationId}
+import me.server.utils.documentStore.DocumentStore
 
 import scala.concurrent.ExecutionContext
 

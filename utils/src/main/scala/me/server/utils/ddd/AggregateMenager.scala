@@ -5,7 +5,7 @@ import akka.pattern.ask
 import akka.persistence.PersistentActor
 import me.server.utils.cqrs._
 import akka.util.Timeout
-import me.server.utils.DocumentStore
+import me.server.utils.documentStore.DocumentStore
 
 import scala.concurrent.ExecutionContext
 
@@ -65,7 +65,9 @@ class AggregateManager[AGGREGATE](actorId: String,
   }
 
   val receiveRecover: Receive = {
-    case e: Any => println(e)
+    case e: NewAggregateAdded => {
+      createAggregateActors(e.id, OrganizationId(0))
+    }
   }
 
   var state = AggregateMenagereState()

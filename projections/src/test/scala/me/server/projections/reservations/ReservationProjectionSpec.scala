@@ -6,13 +6,12 @@ import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import akka.util.Timeout
 import akka.dispatch.ExecutionContexts.global
-import me.server.domain.reservations.ReservationsAggregateContext
 import me.server.domain_api.reservations_api._
 import me.server.domain_api.users_api.PersonInfo
-import me.server.utils.ddd.{AggregateId, AggregateVersion, OrganizationId}
-import me.server.utils.{Aggregate, MockDocumentStore}
+import me.server.utils.ddd.{Aggregate, AggregateId, AggregateVersion, OrganizationId}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import me.server.projections_api.reservations_api.{GetAllReservations, GetReservationsFromTo}
+import me.server.utils.documentStore.MockDocumentStore
 
 import scala.concurrent.duration._
 

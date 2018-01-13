@@ -3,7 +3,7 @@ package me.server.projections.users
 
 import akka.actor.ActorSystem
 import me.server.domain_api.users_api.User
-import me.server.utils.DocumentStore
+import me.server.utils.documentStore.DocumentStore
 
 import scala.concurrent.ExecutionContext
 
