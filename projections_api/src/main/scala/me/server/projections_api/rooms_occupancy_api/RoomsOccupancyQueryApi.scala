@@ -7,7 +7,8 @@ import akka.pattern.ask
 import akka.util.Timeout
 import me.server.utils.ddd.AggregateId
 
-import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 class RoomsOccupancyQueryApi(projection: ActorRef)(implicit akkaTimeout: Timeout) {
 
@@ -17,6 +18,13 @@ class RoomsOccupancyQueryApi(projection: ActorRef)(implicit akkaTimeout: Timeout
 
   def checkRoomOccupancy(query: CheckRoomOccupancy): Future[Boolean] = {
     (projection ? query).mapTo[Boolean]
+  }
+
+  def checkRoomOccupancyAsync(query: CheckRoomOccupancy): Boolean = {
+    Await.result(projection ? query, 5 seconds) match {
+      case b: Boolean => b
+      case _ => throw new Exception("Match error")
+    }
   }
 
   def findFreeRooms(query: FindFreeRooms): Future[List[AggregateId]] = {

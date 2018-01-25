@@ -3,17 +3,17 @@ package me.server.domain.reservations
 import java.time.LocalDate
 
 import me.server.domain_api.reservations_api._
-import me.server.projections_api.rooms_occupancy_api.RoomsOccupancyQueryApi
+import me.server.projections_api.rooms_occupancy_api.{CheckRoomOccupancy, RoomsOccupancyQueryApi}
 import me.server.utils.cqrs.{CommandFailure, CommandResponse, CommandSuccess}
-import me.server.utils.ddd.AggregateId
+import me.server.utils.ddd.{AggregateId, OrganizationId}
 
 class ReservationsCommandHandler(roomOccupancyProjection: RoomsOccupancyQueryApi) {
   def handleCreateReservation(c: CreateReservation): CommandResponse = {
-    val errors = reservationValidate(c.from, c.to, c.roomId)
+    val errors = reservationValidate(c.organizationId, c.from, c.to, c.roomId)
     if(errors.isEmpty)
       CommandSuccess(ReservationCreated(c.from, c.to, c.clientInfo, c.roomId, c.discount))
     else
-      CommandFailure(errors.toString())
+      CommandFailure(errors.mkString(","))
   }
 
   def handleChangeDate(c: ChangeDate, reservation: Reservation): CommandResponse = {
@@ -23,12 +23,12 @@ class ReservationsCommandHandler(roomOccupancyProjection: RoomsOccupancyQueryApi
     if(errors.isEmpty)
       CommandSuccess(DateChanged(c.from, c.to))
     else
-      CommandFailure(errors.toString())
+      CommandFailure(errors.mkString(","))
   }
-
   def handleChangeClientInfo(c: ChangeClientInfo): CommandResponse = {
     CommandSuccess(ClientInfoChanged(c.firstName,c.lastName,c.email,c.phone,c.personalData))
   }
+
 
   def handleChangeRoom(c: ChangeRoom, reservation: Reservation): CommandResponse = {
     //Todo roomValidation
@@ -51,9 +51,11 @@ class ReservationsCommandHandler(roomOccupancyProjection: RoomsOccupancyQueryApi
     CommandSuccess(ReservationActived())
   }
 
-  private def reservationValidate(from: LocalDate, to: LocalDate, roomId: AggregateId): List[String] = {
+  private def reservationValidate(organizationId: OrganizationId, from: LocalDate, to: LocalDate, roomId: AggregateId): List[String] = {
     var errors: List[String] = List.empty
-    //TODO check if room exists and is free
+    val occupancy = roomOccupancyProjection.checkRoomOccupancyAsync(CheckRoomOccupancy(roomId, organizationId, from, to))
+    if(!occupancy)
+      "Room is occupied in this date" :: errors
     errors ::: dateValidate(from, to)
   }
 

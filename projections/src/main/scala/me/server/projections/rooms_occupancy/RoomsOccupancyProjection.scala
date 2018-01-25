@@ -5,8 +5,8 @@ import java.time.LocalDate
 import akka.actor.ActorSystem
 import me.server.domain_api.reservations_api.{DateChanged, ReservationCreated, ReservationEvent, RoomChanged}
 import me.server.projections_api.rooms_occupancy_api._
-import me.server.utils.cqrs.{EventsListener, MyEvent, ProjectionActor}
-import me.server.utils.ddd.{AggregateId, AggregateVersion, OrganizationId}
+import me.server.utils.cqrs.{EventsListener, ProjectionActor}
+import me.server.utils.ddd.{AggregateId, OrganizationId}
 import me.server.utils.documentStore.DocumentStore
 
 import scala.concurrent.ExecutionContext
@@ -63,7 +63,7 @@ class RoomsOccupancyProjection(projectionId: String, aggregateId: String,
 
   def checkRoomOccupancy(id: AggregateId, organizationId: OrganizationId, from: LocalDate, to: LocalDate): Boolean = {
     if(documentStore.getDocumentById(id, organizationId).isDefined)  {
-      !documentStore.getDocumentById(id, organizationId).get.aggregate.occupancy.exists(o => o.from.isBefore(to) && o.to.isAfter(from))
+      !documentStore.getDocumentById(id, organizationId).get.aggregate.occupancy.exists(o => o.from.isBefore(to) || o.to.isAfter(from))
     } else false
   }
 

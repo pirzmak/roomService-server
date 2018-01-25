@@ -2,8 +2,8 @@ package me.server.utils.cqrs
 
 import akka.NotUsed
 import akka.actor.ActorSystem
-import akka.persistence.query.{EventEnvelope, Offset, PersistenceQuery}
 import akka.persistence.query.scaladsl._
+import akka.persistence.query.{EventEnvelope, Offset, PersistenceQuery}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import me.server.utils.ddd.{AggregateId, OrganizationId}
@@ -23,7 +23,9 @@ class EventsListener[TYPE](eventListening: (TYPE, AggregateId, OrganizationId) =
   private implicit val mat = ActorMaterializer()
 
 
-  source.runForeach { event => event.event match {
+  source.runForeach { event =>
+    println(event)
+    event.event match {
     case e: MyEvent => e.event match {
       case ev: TYPE => eventListening(ev,e.aggregateId,e.organizationId)
       case _ => ()
