@@ -1,10 +1,8 @@
 package me.server.utils.ddd
 
 import akka.actor.{ActorRef, Props}
-import akka.pattern.ask
 import akka.persistence.PersistentActor
 import me.server.utils.cqrs._
-import akka.util.Timeout
 import me.server.utils.documentStore.DocumentStore
 
 import scala.concurrent.ExecutionContext
@@ -15,7 +13,7 @@ case class AggregateMenagereState(aggregatesActors: List[AggregateId] = Nil) {
   override def toString: String = aggregatesActors.reverse.toString
 }
 
-case class NewAggregateAdded(id: AggregateId)
+case class NewAggregateAdded(id: AggregateId) extends Event
 
 class AggregateManager[AGGREGATE](actorId: String,
                                   aggregateContext: AggregateContext[AGGREGATE],
