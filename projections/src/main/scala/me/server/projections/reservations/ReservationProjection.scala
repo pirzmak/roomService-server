@@ -28,7 +28,6 @@ class ReservationProjection(projectionId: String, aggregateId: String, documentS
   }
 
   def getReservationById(id: AggregateId, organizationId: OrganizationId): Option[Aggregate[Reservation]] = {
-    var a = documentStore.getDocumentById(id, organizationId)
     documentStore.getDocumentById(id, organizationId)
   }
 

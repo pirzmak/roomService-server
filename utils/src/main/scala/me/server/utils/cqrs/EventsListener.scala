@@ -30,7 +30,7 @@ class EventsListener[TYPE](eventListening: (TYPE, AggregateId, OrganizationId) =
       case ev: TYPE => eventListening(ev,e.aggregateId,e.organizationId)
       case _ => ()
     }
-    case _ => throw new Exception("Dupa")
+    case _ => throw new Exception("Wrong message")
   }
   }
 }

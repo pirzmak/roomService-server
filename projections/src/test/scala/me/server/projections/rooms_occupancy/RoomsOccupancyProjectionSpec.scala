@@ -54,11 +54,11 @@ class RoomsOccupancyProjectionSpec extends TestKit(ActorSystem("ReservaationsPro
       commandHandler ! CheckRoomOccupancy(AggregateId(0),OrganizationId(0),LocalDate.now().plusDays(4), LocalDate.now().plusDays(7))
       expectMsg(false)
       commandHandler ! CheckRoomOccupancy(AggregateId(0),OrganizationId(0),LocalDate.now().plusDays(7), LocalDate.now().plusDays(12))
-      expectMsg(true)
+      expectMsg(false)
       commandHandler ! CheckRoomOccupancy(AggregateId(0),OrganizationId(0),LocalDate.now().plusDays(10), LocalDate.now().plusDays(12))
-      expectMsg(true)
+      expectMsg(false)
       commandHandler ! CheckRoomOccupancy(AggregateId(0),OrganizationId(0),LocalDate.now().minusDays(10), LocalDate.now())
-      expectMsg(true)
+      expectMsg(false)
     }
 
     "find free room" in {
